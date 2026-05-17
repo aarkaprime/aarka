@@ -1,0 +1,168 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Developer {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String
+  company       String?
+  password      String
+  role          String    @default("developer")
+  plan          String    @default("free")
+  status        String    @default("active")
+  monthlyCallsUsed  Int    @default(0)
+  monthlyCallsLimit Int   @default(100)
+  totalCallsAllTime  Int   @default(0)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  apiKeys       ApiKey[]
+  webhooks      Webhook[]
+  usageLogs     UsageLog[]
+
+  @@index([email])
+}
+
+model ApiKey {
+  id            String    @id @default(cuid())
+  developerId   String
+  developer     Developer @relation(fields: [developerId], references: [id], onDelete: Cascade)
+  keyPrefix     String
+  keyHash       String    @unique
+  name          String
+  environment   String    @default("test")
+  status        String    @default("active")
+  lastUsedAt    DateTime?
+  monthlyCallsUsed  Int    @default(0)
+  monthlyCallsLimit Int   @default(100)
+  createdAt     DateTime  @default(now())
+  expiresAt     DateTime?
+
+  usageLogs     UsageLog[]
+
+  @@index([keyHash])
+  @@index([developerId])
+}
+
+model UsageLog {
+  id            String    @id @default(cuid())
+  apiKeyId      String
+  apiKey        ApiKey    @relation(fields: [apiKeyId], references: [id], onDelete: Cascade)
+  developerId   String
+  developer     Developer @relation(fields: [developerId], references: [id], onDelete: Cascade)
+  endpoint      String
+  method        String
+  statusCode    Int
+  tokensUsed    Int       @default(0)
+  responseTimeMs Int      @default(0)
+  ipAddress     String?
+  userAgent     String?
+  createdAt     DateTime  @default(now())
+
+  @@index([apiKeyId])
+  @@index([developerId])
+  @@index([createdAt])
+}
+
+model Webhook {
+  id            String    @id @default(cuid())
+  developerId   String
+  developer     Developer @relation(fields: [developerId], references: [id], onDelete: Cascade)
+  url           String
+  events        String
+  secret        String
+  status        String    @default("active")
+  lastTriggeredAt DateTime?
+  successCount  Int       @default(0)
+  failureCount  Int       @default(0)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([developerId])
+}
+
+model Plan {
+  id              String  @id @default(cuid())
+  slug            String  @unique
+  name            String
+  priceMonthly    Float
+  callsPerMonth   Int
+  maxApiKeys      Int
+  maxWebhooks     Int
+  features        String
+  aiModelsAvailable String
+  rateLimitPerMin Int     @default(60)
+  supportLevel    String  @default("community")
+  createdAt       DateTime @default(now())
+}
+
+model Property {
+  id            String    @id @default(cuid())
+  developerId   String
+  externalId    String?
+  title         String
+  propertyType  String    @default("apartment")
+  location      String
+  neighborhood  String?
+  city          String    @default("Nairobi")
+  country       String    @default("Kenya")
+  price         Float
+  currency      String    @default("KES")
+  bedrooms      Int       @default(0)
+  bathrooms     Int       @default(0)
+  areaSqm       Float?
+  features      String
+  description   String?
+  status        String    @default("active")
+  metadata      String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([developerId])
+  @@index([status])
+  @@index([propertyType])
+}
+
+model Lead {
+  id            String    @id @default(cuid())
+  developerId   String
+  propertyId    String?
+  externalId    String?
+  name          String
+  email         String?
+  phone         String?
+  message       String?
+  source        String    @default("api")
+  status        String    @default("new")
+  metadata      String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([developerId])
+  @@index([propertyId])
+  @@index([status])
+}
+
+model GeneratedContent {
+  id            String    @id @default(cuid())
+  developerId   String
+  propertyId    String?
+  externalId    String?
+  contentType   String
+  platform      String?
+  language      String    @default("english")
+  tone          String?
+  title         String
+  body          String
+  tokensUsed    Int       @default(0)
+  aiModel       String    @default("deepseek-chat")
+  createdAt     DateTime  @default(now())
+
+  @@index([developerId])
+  @@index([propertyId])
+}
