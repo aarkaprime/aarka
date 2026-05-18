@@ -1,9 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Activity, Coins, Building, Users } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Progress } from '@/components/ui/progress'
+import { Activity, Database, Building2, Users } from 'lucide-react'
 import { useAppStore } from '@/store/app-store'
 
 interface OverviewData {
@@ -13,7 +11,19 @@ interface OverviewData {
   api_calls_this_month: number
   conversion_rate: number
   average_response_time_ms: number
-  leads_by_status: Record<string, number>
+}
+
+function SkeletonCard() {
+  return (
+    <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-6 animate-pulse">
+      <div className="flex items-center justify-between mb-4">
+        <div className="h-4 w-28 bg-zinc-800 rounded" />
+        <div className="h-4 w-4 bg-zinc-800 rounded" />
+      </div>
+      <div className="h-8 w-20 bg-zinc-800 rounded mb-2" />
+      <div className="h-3 w-24 bg-zinc-800 rounded" />
+    </div>
+  )
 }
 
 export function OverviewStats() {
@@ -21,24 +31,23 @@ export function OverviewStats() {
   const [data, setData] = useState<OverviewData | null>(null)
   const [loading, setLoading] = useState(true)
 
-  const monthlyUsed = (developer?.monthly_calls_used as number) || 0
-  const monthlyLimit = (developer?.monthly_calls_limit as number) || 100
+  const monthlyUsed = (developer as Record<string, unknown>)?.monthly_calls_used as number || 0
+  const monthlyLimit = (developer as Record<string, unknown>)?.monthly_calls_limit as number || 100
   const creditsRemaining = monthlyLimit - monthlyUsed
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const apiKey = localStorage.getItem('eq_api_key') || ''
         const res = await fetch('/api/v1/analytics/overview', {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('eq_api_key') || ''}`,
-          },
+          headers: { Authorization: `Bearer ${apiKey}` },
         })
         const result = await res.json()
         if (result.success) {
           setData(result.data)
         }
       } catch {
-        // Silently fail — data will show defaults
+        // Silently fail
       } finally {
         setLoading(false)
       }
@@ -46,32 +55,43 @@ export function OverviewStats() {
     fetchData()
   }, [])
 
+  if (loading) {
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <SkeletonCard />
+        <SkeletonCard />
+        <SkeletonCard />
+        <SkeletonCard />
+      </div>
+    )
+  }
+
   const stats = [
     {
       title: 'API Calls This Month',
-      value: monthlyUsed.toLocaleString(),
+      value: (data?.api_calls_this_month ?? monthlyUsed).toLocaleString(),
       subtitle: `of ${monthlyLimit.toLocaleString()} limit`,
       icon: Activity,
-      progress: monthlyLimit > 0 ? (monthlyUsed / monthlyLimit) * 100 : 0,
+      progress: monthlyLimit > 0 ? ((data?.api_calls_this_month ?? monthlyUsed) / monthlyLimit) * 100 : 0,
     },
     {
       title: 'Credits Remaining',
       value: creditsRemaining.toLocaleString(),
-      subtitle: `resets monthly`,
-      icon: Coins,
+      subtitle: 'resets monthly',
+      icon: Database,
       progress: monthlyLimit > 0 ? (creditsRemaining / monthlyLimit) * 100 : 100,
     },
     {
       title: 'Properties Stored',
-      value: data?.total_properties?.toLocaleString() || '0',
+      value: (data?.total_properties ?? 0).toLocaleString(),
       subtitle: 'active listings',
-      icon: Building,
+      icon: Building2,
       progress: undefined,
     },
     {
       title: 'Total Leads',
-      value: data?.total_leads?.toLocaleString() || '0',
-      subtitle: `${data?.conversion_rate || 0}% conversion`,
+      value: (data?.total_leads ?? 0).toLocaleString(),
+      subtitle: `${(data?.conversion_rate ?? 0).toFixed(1)}% conversion`,
       icon: Users,
       progress: undefined,
     },
@@ -80,24 +100,27 @@ export function OverviewStats() {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       {stats.map((stat) => (
-        <Card key={stat.title} className="bg-zinc-900 border-zinc-800">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-zinc-400">
-              {stat.title}
-            </CardTitle>
+        <div
+          key={stat.title}
+          className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-6 hover:border-zinc-700 transition-colors"
+        >
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-sm font-medium text-zinc-400">{stat.title}</span>
             <stat.icon className="w-4 h-4 text-zinc-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-white">{stat.value}</div>
-            <p className="text-xs text-zinc-500 mt-1">{stat.subtitle}</p>
-            {stat.progress !== undefined && (
-              <Progress
-                value={stat.progress}
-                className="mt-3 h-1.5 bg-zinc-800 [&>div]:bg-emerald-500"
-              />
-            )}
-          </CardContent>
-        </Card>
+          </div>
+          <div className="text-2xl font-bold text-white">{stat.value}</div>
+          <p className="text-xs text-zinc-500 mt-1">{stat.subtitle}</p>
+          {stat.progress !== undefined && (
+            <div className="mt-3">
+              <div className="h-1.5 bg-zinc-800 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-emerald-500 rounded-full transition-all duration-500"
+                  style={{ width: `${Math.min(stat.progress, 100)}%` }}
+                />
+              </div>
+            </div>
+          )}
+        </div>
       ))}
     </div>
   )

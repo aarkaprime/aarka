@@ -1,88 +1,41 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { MessageSquare, Globe, LayoutDashboard, Smartphone, TrendingUp, Megaphone } from 'lucide-react'
+import { MessageCircle, Globe, LayoutDashboard, Smartphone, BarChart3, Send } from 'lucide-react'
 
 const useCases = [
-  {
-    icon: MessageSquare,
-    title: 'WhatsApp Property Bot',
-    description: 'Build a WhatsApp bot that auto-generates property descriptions and sends them to interested buyers in real time.',
-  },
-  {
-    icon: Globe,
-    title: 'Property Listing Website',
-    description: 'Create a full listing site with AI-generated content, search, and lead capture — launch in days.',
-  },
-  {
-    icon: LayoutDashboard,
-    title: 'Agency Dashboard',
-    description: 'Build an internal dashboard for agencies to manage listings, track leads, and generate marketing content.',
-  },
-  {
-    icon: Smartphone,
-    title: 'Mobile Property App',
-    description: 'Power your mobile app with property data, AI content, and real-time notifications via webhooks.',
-  },
-  {
-    icon: TrendingUp,
-    title: 'Market Analysis Tool',
-    description: 'Analyze property trends, track leads through the funnel, and generate market reports with analytics data.',
-  },
-  {
-    icon: Megaphone,
-    title: 'SMS Marketing',
-    description: 'Generate compelling SMS campaigns for property listings and deliver them through your preferred SMS gateway.',
-  },
+  { icon: MessageCircle, title: 'WhatsApp Property Bot', desc: 'Automate property inquiries and send AI-generated listings on WhatsApp.' },
+  { icon: Globe, title: 'Property Listing Website', desc: 'Power your listings with AI-generated descriptions in any language.' },
+  { icon: LayoutDashboard, title: 'Agency Dashboard', desc: 'Manage multiple clients and properties through one unified API.' },
+  { icon: Smartphone, title: 'Mobile Property App', desc: 'AI-powered search, recommendations, and instant content generation.' },
+  { icon: BarChart3, title: 'Market Analysis Tool', desc: 'Aggregate and analyze property data across markets and regions.' },
+  { icon: Send, title: 'SMS Marketing', desc: 'Send AI-generated property alerts and campaigns via SMS at scale.' },
 ]
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.1 },
-  },
-}
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0 },
-}
 
 export function UseCases() {
   return (
-    <section className="py-20 sm:py-28 bg-[#09090b]">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-24 px-4 relative">
+      <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl font-bold text-white">
-            Built for <span className="text-emerald-400">every use case</span>
-          </h2>
-          <p className="mt-4 text-zinc-400 text-lg max-w-2xl mx-auto">
-            From chatbots to dashboards, EstateIQ powers the full spectrum of real estate technology.
-          </p>
+          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">Build Anything. Anywhere.</h2>
+          <p className="text-zinc-400 text-lg">Developers are using EstateIQ to power these apps and more.</p>
         </div>
-
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-50px' }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
-        >
-          {useCases.map((useCase) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {useCases.map((uc, i) => (
             <motion.div
-              key={useCase.title}
-              variants={itemVariants}
-              className="group p-6 rounded-xl bg-zinc-900/50 border border-zinc-800 hover:border-emerald-500/30 transition-all duration-300"
+              key={uc.title}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: i * 0.05 }}
+              className="p-6 rounded-xl border border-zinc-800 bg-zinc-900/50 hover:border-emerald-500/20 transition-all"
             >
-              <div className="w-12 h-12 rounded-lg bg-emerald-500/10 flex items-center justify-center mb-4 group-hover:bg-emerald-500/20 transition-colors">
-                <useCase.icon className="w-6 h-6 text-emerald-400" />
-              </div>
-              <h3 className="text-lg font-semibold text-white mb-2">{useCase.title}</h3>
-              <p className="text-sm text-zinc-400 leading-relaxed">{useCase.description}</p>
+              <uc.icon className="w-6 h-6 text-emerald-500 mb-3" />
+              <h3 className="text-white font-semibold mb-1">{uc.title}</h3>
+              <p className="text-zinc-500 text-sm">{uc.desc}</p>
             </motion.div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   )

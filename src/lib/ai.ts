@@ -1,5 +1,3 @@
-import ZAI from 'z-ai-web-dev-sdk'
-
 interface PropertyData {
   title: string
   propertyType: string
@@ -26,22 +24,25 @@ interface ContentResult {
   tokensUsed: number
 }
 
-const REAL_ESTATE_SYSTEM_PROMPT = `You are an elite real estate marketing copywriter. You specialize in the East African property market — Kenya, Ethiopia, Tanzania, Uganda, Nigeria, South Africa, Ghana. You understand local buyer psychology, neighborhood dynamics, investment potential, and cultural nuances.
+const GLOBAL_RE_SYSTEM_PROMPT = `You are an elite real estate marketing copywriter. You operate globally — from New York to Dubai, London to Singapore, Tokyo to São Paulo. You understand diverse buyer psychology across cultures, neighborhood dynamics, investment potential, and local market nuances worldwide.
 
 Rules:
-- Use metric system (square meters, not square feet)
-- Reference local landmarks, neighborhoods, and amenities
+- Adapt to the local market — use appropriate measurement systems (metric or imperial based on location)
+- Reference relevant local landmarks, neighborhoods, and amenities
 - Highlight investment potential (appreciation, rental yield, capital gains)
 - Use the local currency when mentioned
 - Be warm and inviting but professional
 - Create emotional connection with the property
 - Always include a clear call-to-action
-- For Swahili: use natural Swahili, not translated English
-- For Amharic: use natural Amharic, not translated English
-- Never use American/British real estate clichés that don't apply in Africa`
+- For non-English languages: use natural, native phrasing — never awkward translations
+- Avoid region-specific clichés that don't apply globally
+- Understand luxury markets (Monaco, Hong Kong, Manhattan) as well as emerging markets
+- Adapt tone and formality to local cultural norms`
 
-async function callAI(systemPrompt: string, userPrompt: string, options?: { temperature?: number; maxTokens?: number }): Promise<{ content: string; tokensUsed: number }> {
+// Fallback AI using z-ai-web-dev-sdk (available in this environment)
+async function callFallbackAI(systemPrompt: string, userPrompt: string, options?: { temperature?: number; maxTokens?: number }): Promise<{ content: string; tokensUsed: number }> {
   try {
+    const ZAI = (await import('z-ai-web-dev-sdk')).default
     const zai = await ZAI.create()
     const completion = await zai.chat.completions.create({
       messages: [
@@ -51,29 +52,85 @@ async function callAI(systemPrompt: string, userPrompt: string, options?: { temp
       temperature: options?.temperature ?? 0.7,
       max_tokens: options?.maxTokens ?? 2000,
     })
-    const content = completion.choices[0]?.message?.content || ''
+    const content = completion.choices?.[0]?.message?.content || ''
     const tokensUsed = completion.usage?.total_tokens ?? 0
     return { content, tokensUsed }
   } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : 'Unknown error'
+    throw new Error(`Fallback AI also failed: ${msg}`)
+  }
+}
+
+async function callDeepSeek(systemPrompt: string, userPrompt: string, options?: { temperature?: number; maxTokens?: number; model?: string }): Promise<{ content: string; tokensUsed: number }> {
+  const apiKey = process.env.DEEPSEEK_API_KEY
+  if (!apiKey) {
+    console.log('No DeepSeek API key, using fallback AI')
+    return callFallbackAI(systemPrompt, userPrompt, options)
+  }
+
+  const body = {
+    model: options?.model || 'deepseek-chat',
+    messages: [
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: userPrompt },
+    ],
+    temperature: options?.temperature ?? 0.7,
+    max_tokens: options?.maxTokens ?? 2000,
+  }
+
+  try {
+    const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify(body),
+    })
+
+    if (!response.ok) {
+      const errText = await response.text()
+      console.error(`DeepSeek API error ${response.status}: ${errText}`)
+      // If balance error or auth error, fall back to z-ai
+      if (response.status === 402 || response.status === 401 || response.status === 429) {
+        console.log('DeepSeek unavailable, falling back to alternate AI provider')
+        return callFallbackAI(systemPrompt, userPrompt, options)
+      }
+      throw new Error(`DeepSeek API error ${response.status}: ${errText}`)
+    }
+
+    const data = await response.json()
+    const content = data.choices?.[0]?.message?.content || ''
+    const tokensUsed = data.usage?.total_tokens ?? 0
+    return { content, tokensUsed }
+  } catch (error: unknown) {
     const errMsg = error instanceof Error ? error.message : 'Unknown error'
-    console.error('AI call failed:', errMsg)
+    // If it's a balance/auth error that wasn't caught above, try fallback
+    if (errMsg.includes('402') || errMsg.includes('401') || errMsg.includes('Insufficient Balance')) {
+      console.log('DeepSeek failed with auth/balance error, falling back to alternate AI provider')
+      return callFallbackAI(systemPrompt, userPrompt, options)
+    }
+    console.error('DeepSeek call failed:', errMsg)
     // Retry once
     try {
-      const zai = await ZAI.create()
-      const completion = await zai.chat.completions.create({
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: userPrompt },
-        ],
-        temperature: options?.temperature ?? 0.7,
-        max_tokens: options?.maxTokens ?? 2000,
+      const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify(body),
       })
-      const content = completion.choices[0]?.message?.content || ''
-      const tokensUsed = completion.usage?.total_tokens ?? 0
-      return { content, tokensUsed }
+      if (!response.ok) {
+        // On retry failure, fall back
+        console.log('DeepSeek retry failed, falling back to alternate AI provider')
+        return callFallbackAI(systemPrompt, userPrompt, options)
+      }
+      const data = await response.json()
+      return { content: data.choices?.[0]?.message?.content || '', tokensUsed: data.usage?.total_tokens ?? 0 }
     } catch (retryError: unknown) {
-      const retryMsg = retryError instanceof Error ? retryError.message : 'Unknown error'
-      throw new Error(`AI generation failed: ${retryMsg}`)
+      console.log('DeepSeek retry error, falling back to alternate AI provider')
+      return callFallbackAI(systemPrompt, userPrompt, options)
     }
   }
 }
@@ -85,13 +142,13 @@ export async function generatePropertyDescription(data: PropertyData, language: 
   for (const tone of tones) {
     const toneInstructions: Record<string, string> = {
       professional: 'Write a formal, data-driven, investment-focused property description. Include market data references and ROI potential.',
-      lifestyle: 'Write a warm, emotional property description focusing on the living experience, family life, and lifestyle benefits.',
-      short: 'Write a punchy, social-media-ready property description under 100 words. Brief and compelling.',
+      lifestyle: 'Write a warm, emotional property description focusing on the living experience, lifestyle benefits, and the feeling of home.',
+      short: 'Write a punchy, social-media-ready property description under 100 words. Brief, compelling, and shareable.',
     }
 
-    const { content, tokensUsed } = await callAI(
-      REAL_ESTATE_SYSTEM_PROMPT,
-      `Generate a ${tone} property description in ${language} for this property:\n\nTitle: ${data.title}\nType: ${data.propertyType}\nLocation: ${data.location}${data.neighborhood ? ', ' + data.neighborhood : ''}\nCity: ${data.city || 'Nairobi'}\nCountry: ${data.country || 'Kenya'}\nPrice: ${data.price} ${data.currency || 'KES'}\nBedrooms: ${data.bedrooms}\nBathrooms: ${data.bathrooms}${data.areaSqm ? '\nArea: ' + data.areaSqm + ' sqm' : ''}\nFeatures: ${data.features.join(', ') || 'None specified'}\n\n${toneInstructions[tone]}`
+    const { content, tokensUsed } = await callDeepSeek(
+      GLOBAL_RE_SYSTEM_PROMPT,
+      `Generate a ${tone} property description in ${language} for this property:\n\nTitle: ${data.title}\nType: ${data.propertyType}\nLocation: ${data.location}${data.neighborhood ? ', ' + data.neighborhood : ''}\nCity: ${data.city || 'Not specified'}\nCountry: ${data.country || 'Not specified'}\nPrice: ${data.price} ${data.currency || 'USD'}\nBedrooms: ${data.bedrooms}\nBathrooms: ${data.bathrooms}${data.areaSqm ? '\nArea: ' + data.areaSqm + ' sqm' : ''}\nFeatures: ${data.features.join(', ') || 'None specified'}\n\n${toneInstructions[tone]}`
     )
 
     results.push({
@@ -108,7 +165,7 @@ export async function generatePropertyDescription(data: PropertyData, language: 
 }
 
 export async function generateSocialMediaPosts(data: PropertyData, language: string = 'english'): Promise<ContentResult[]> {
-  const prompt = `Generate 5 social media posts in ${language} for this property. Format each post with a label:
+  const prompt = `Generate 5 social media posts in ${language} for this property. Format each post with a clear label:
 
 FACEBOOK POST 1: (longer, engaging, with questions)
 FACEBOOK POST 2: (longer, engaging, with questions)
@@ -120,14 +177,14 @@ Property Details:
 Title: ${data.title}
 Type: ${data.propertyType}
 Location: ${data.location}${data.neighborhood ? ', ' + data.neighborhood : ''}
-Price: ${data.price} ${data.currency || 'KES'}
+Price: ${data.price} ${data.currency || 'USD'}
 Bedrooms: ${data.bedrooms}, Bathrooms: ${data.bathrooms}
 ${data.areaSqm ? 'Area: ' + data.areaSqm + ' sqm' : ''}
 Features: ${data.features.join(', ') || 'None specified'}
 
-Include relevant hashtags for the local African market.`
+Include relevant hashtags for the property's market and location.`
 
-  const { content, tokensUsed } = await callAI(REAL_ESTATE_SYSTEM_PROMPT, prompt, { maxTokens: 3000 })
+  const { content, tokensUsed } = await callDeepSeek(GLOBAL_RE_SYSTEM_PROMPT, prompt, { maxTokens: 3000 })
 
   const posts = content.split(/\n(?=FACEBOOK|INSTAGRAM|TWITTER)/i).filter(p => p.trim())
   const platforms = ['facebook', 'facebook', 'instagram', 'instagram', 'twitter']
@@ -153,14 +210,14 @@ Property Details:
 Title: ${data.title}
 Type: ${data.propertyType}
 Location: ${data.location}${data.neighborhood ? ', ' + data.neighborhood : ''}
-Price: ${data.price} ${data.currency || 'KES'}
+Price: ${data.price} ${data.currency || 'USD'}
 Bedrooms: ${data.bedrooms}, Bathrooms: ${data.bathrooms}
 ${data.areaSqm ? 'Area: ' + data.areaSqm + ' sqm' : ''}
 Features: ${data.features.join(', ') || 'None specified'}
 
 Keep each message short, punchy, optimized for WhatsApp reading.`
 
-  const { content, tokensUsed } = await callAI(REAL_ESTATE_SYSTEM_PROMPT, prompt, { maxTokens: 2000 })
+  const { content, tokensUsed } = await callDeepSeek(GLOBAL_RE_SYSTEM_PROMPT, prompt, { maxTokens: 2000 })
 
   const messages = content.split(/\n(?=\d\.|\nPROFESSIONAL|\nCASUAL|\nURGENT)/i).filter(m => m.trim())
   const tones = ['professional', 'casual', 'urgent']
@@ -198,11 +255,11 @@ Property Details:
 Title: ${data.title}
 Type: ${data.propertyType}
 Location: ${data.location}${data.neighborhood ? ', ' + data.neighborhood : ''}
-Price: ${data.price} ${data.currency || 'KES'}
+Price: ${data.price} ${data.currency || 'USD'}
 Bedrooms: ${data.bedrooms}, Bathrooms: ${data.bathrooms}
 Features: ${data.features.join(', ') || 'None specified'}`
 
-  const { content, tokensUsed } = await callAI(REAL_ESTATE_SYSTEM_PROMPT, prompt, { maxTokens: 4000 })
+  const { content, tokensUsed } = await callDeepSeek(GLOBAL_RE_SYSTEM_PROMPT, prompt, { maxTokens: 4000 })
 
   const emails = content.split(/EMAIL\s*\d/i).filter(e => e.trim())
   const emailTypes = ['New Listing Announcement', 'Open House Invitation', 'Price Drop Alert']
@@ -230,13 +287,13 @@ Property Details:
 Title: ${data.title}
 Type: ${data.propertyType}
 Location: ${data.location}${data.neighborhood ? ', ' + data.neighborhood : ''}
-Price: ${data.price} ${data.currency || 'KES'}
+Price: ${data.price} ${data.currency || 'USD'}
 Bedrooms: ${data.bedrooms}, Bathrooms: ${data.bathrooms}
 Features: ${data.features.join(', ') || 'None specified'}
 
 Generate in ${language}.`
 
-  const { content, tokensUsed } = await callAI(REAL_ESTATE_SYSTEM_PROMPT, prompt, { maxTokens: 2000 })
+  const { content, tokensUsed } = await callDeepSeek(GLOBAL_RE_SYSTEM_PROMPT, prompt, { maxTokens: 2000 })
 
   return [{
     title: `${platform.charAt(0).toUpperCase() + platform.slice(1)} Ad Copy`,
@@ -249,6 +306,6 @@ Generate in ${language}.`
 }
 
 export async function generateCustomContent(prompt: string, context?: string): Promise<{ content: string; tokensUsed: number }> {
-  const systemPrompt = context ? `${REAL_ESTATE_SYSTEM_PROMPT}\n\nContext: ${context}` : REAL_ESTATE_SYSTEM_PROMPT
-  return callAI(systemPrompt, prompt, { maxTokens: 3000 })
+  const systemPrompt = context ? `${GLOBAL_RE_SYSTEM_PROMPT}\n\nContext: ${context}` : GLOBAL_RE_SYSTEM_PROMPT
+  return callDeepSeek(systemPrompt, prompt, { maxTokens: 3000 })
 }

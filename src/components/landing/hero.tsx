@@ -1,117 +1,108 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { ArrowRight, BookOpen, Zap } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { ArrowRight, Terminal } from 'lucide-react'
 import { useAppStore } from '@/store/app-store'
 
 export function Hero() {
   const setView = useAppStore((s) => s.setView)
 
-  const codeSnippet = `curl -X POST https://api.estateiq.africa/v1/ai/generate \\
-  -H "Authorization: Bearer ei_sk_your_api_key" \\
-  -H "Content-Type: application/json" \\
-  -d '{
-    "content_type": "property_description",
-    "property": {
-      "title": "3BR Apartment in Kilimani",
-      "location": "Kilimani, Nairobi",
-      "price": 45000,
-      "currency": "KES",
-      "bedrooms": 3,
-      "type": "apartment"
-    },
-    "language": "en",
-    "tone": "professional"
-  }'`
-
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background gradient */}
+      {/* Background effects */}
       <div className="absolute inset-0 bg-[#09090b]" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-emerald-500/10 rounded-full blur-[120px]" />
-      <div className="absolute top-1/4 right-1/4 w-[400px] h-[400px] bg-emerald-600/5 rounded-full blur-[80px]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(16,185,129,0.15),transparent)]" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-emerald-500/5 blur-[120px] rounded-full" />
 
-      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
-        <div className="text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+      {/* Grid pattern */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:64px_64px]" />
+
+      <div className="relative z-10 max-w-5xl mx-auto px-4 text-center">
+        {/* Badge */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/5 text-emerald-400 text-sm mb-8"
+        >
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          API v1.0 — Now Live
+        </motion.div>
+
+        {/* Headline */}
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight text-white leading-[1.1] mb-6"
+        >
+          The AI Engine Behind
+          <br />
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-600">
+            The World&apos;s Real Estate Apps
+          </span>
+        </motion.h1>
+
+        {/* Subheadline */}
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="text-lg sm:text-xl text-zinc-400 max-w-2xl mx-auto mb-10 leading-relaxed"
+        >
+          Generate property descriptions, social media content, WhatsApp messages, email campaigns, and ad copy — through one powerful API. Build your real estate app in hours, not months.
+        </motion.p>
+
+        {/* CTAs */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16"
+        >
+          <button
+            onClick={() => setView('register')}
+            className="group px-8 py-3 bg-emerald-500 hover:bg-emerald-400 text-black font-semibold rounded-lg transition-all flex items-center gap-2 shadow-lg shadow-emerald-500/20 cursor-pointer"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm mb-8">
-              <Zap className="w-4 h-4" />
-              <span>Now serving developers across Africa</span>
+            Get Your Free API Key
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+          </button>
+          <button
+            onClick={() => setView('docs-getting-started')}
+            className="px-8 py-3 border border-zinc-700 hover:border-zinc-500 text-zinc-300 hover:text-white font-medium rounded-lg transition-all cursor-pointer"
+          >
+            Read the Docs
+          </button>
+        </motion.div>
+
+        {/* Code preview */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="max-w-2xl mx-auto"
+        >
+          <div className="rounded-xl border border-zinc-800 bg-zinc-950/80 backdrop-blur-sm overflow-hidden shadow-2xl">
+            <div className="flex items-center gap-2 px-4 py-3 border-b border-zinc-800">
+              <div className="w-3 h-3 rounded-full bg-red-500/60" />
+              <div className="w-3 h-3 rounded-full bg-yellow-500/60" />
+              <div className="w-3 h-3 rounded-full bg-green-500/60" />
+              <span className="ml-2 text-xs text-zinc-500 font-mono">terminal</span>
             </div>
-          </motion.div>
-
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white tracking-tight leading-tight"
-          >
-            The AI Engine Behind
-            <br />
-            <span className="text-emerald-400">Africa&apos;s Next</span>
-            <br />
-            Real Estate Apps
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="mt-6 text-lg sm:text-xl text-zinc-400 max-w-2xl mx-auto leading-relaxed"
-          >
-            Generate property descriptions, social media content, WhatsApp messages, and more — through one powerful API.
-            Build your real estate app in hours, not months.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="mt-10 flex flex-col sm:flex-row gap-4 justify-center"
-          >
-            <Button
-              size="lg"
-              className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-6 text-lg cursor-pointer"
-              onClick={() => setView('register')}
-            >
-              Get Your Free API Key
-              <ArrowRight className="ml-2 w-5 h-5" />
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="border-zinc-700 text-zinc-300 hover:bg-zinc-800 px-8 py-6 text-lg cursor-pointer"
-              onClick={() => setView('docs')}
-            >
-              <BookOpen className="mr-2 w-5 h-5" />
-              Read the Docs
-            </Button>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
-            className="mt-16 max-w-3xl mx-auto"
-          >
-            <div className="relative rounded-xl overflow-hidden border border-zinc-800 bg-zinc-950 shadow-2xl">
-              <div className="flex items-center gap-2 px-4 py-3 bg-zinc-900 border-b border-zinc-800">
-                <div className="w-3 h-3 rounded-full bg-red-500/70" />
-                <div className="w-3 h-3 rounded-full bg-amber-500/70" />
-                <div className="w-3 h-3 rounded-full bg-emerald-500/70" />
-                <span className="ml-3 text-xs text-zinc-500 font-mono">Terminal</span>
-              </div>
-              <pre className="p-4 sm:p-6 text-xs sm:text-sm font-mono text-zinc-300 overflow-x-auto">
-                <code>{codeSnippet}</code>
-              </pre>
+            <div className="p-4 font-mono text-sm text-left">
+              <div className="text-zinc-500">$ curl -X POST https://api.estateiq.com/v1/ai/generate \</div>
+              <div className="text-zinc-500 ml-4">-H <span className="text-emerald-400">&quot;Authorization: Bearer ei_sk_...&quot;</span> \</div>
+              <div className="text-zinc-500 ml-4">-d <span className="text-amber-300">{`'{ "content_type": "property_description" }'`}</span></div>
+              <div className="mt-2 text-zinc-500">{'}'}</div>
+              <div className="mt-2 text-emerald-400">{'{'}</div>
+              <div className="text-zinc-300 ml-2">&quot;data&quot;: {'{'}</div>
+              <div className="text-zinc-300 ml-4">&quot;results&quot;: [<span className="text-emerald-400">3 AI descriptions</span>],</div>
+              <div className="text-zinc-300 ml-4">&quot;tokens_used&quot;: 847</div>
+              <div className="text-zinc-300 ml-2">{'}'}</div>
+              <div className="text-emerald-400">{'}'}</div>
             </div>
-          </motion.div>
-        </div>
+          </div>
+        </motion.div>
       </div>
     </section>
   )

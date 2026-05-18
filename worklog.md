@@ -311,3 +311,441 @@ Built the complete frontend for the EstateIQ API Platform using Zustand for clie
 - Dev server running and compiling successfully
 
 ### Status: ✅ Complete
+
+---
+
+## Phase 4: Global Rebuild — DeepSeek API + Worldwide Scope (Task ID: rebuild-backend)
+
+### Date: 2026-03-04
+
+### Summary
+Rebuilt the EstateIQ API Platform to be truly global (not Africa-only) and switched the AI engine from z-ai-web-dev-sdk to direct DeepSeek API calls. All Africa-specific defaults, references, and prompts were replaced with global equivalents.
+
+### Files Modified
+
+1. **.env.local** — Replaced placeholder DEEPSEEK_API_KEY with real key (`sk-188e7...`), updated NEXTAUTH_SECRET
+
+2. **src/lib/ai.ts** — Complete rewrite:
+   - Removed `import ZAI from 'z-ai-web-dev-sdk'` — no longer used
+   - Replaced `callAI()` (z-ai-web-dev-sdk) with `callDeepSeek()` (direct fetch to `https://api.deepseek.com/v1/chat/completions`)
+   - Replaced `REAL_ESTATE_SYSTEM_PROMPT` (East African market) with `GLOBAL_RE_SYSTEM_PROMPT` (worldwide scope — NY, Dubai, London, Singapore, Tokyo, São Paulo)
+   - Global prompt rules: adapt measurement systems (metric/imperial), reference local landmarks, use local currency, avoid region-specific clichés, understand luxury and emerging markets
+   - All prompt templates updated: city defaults from "Nairobi" → "Not specified", country from "Kenya" → "Not specified", currency from "KES" → "USD"
+   - Social media prompt: removed "local African market" hashtag instruction → "property's market and location"
+   - Retry logic preserved with improved error messages
+
+3. **src/lib/schemas.ts** — Updated defaults and enums:
+   - `city`: removed `default('Nairobi')` → now `optional()`
+   - `country`: removed `default('Kenya')` → now `optional()`
+   - `currency`: `default('KES')` → `default('USD')`
+   - `language` enum: `['english', 'swahili', 'amharic', 'french', 'arabic']` → `['english', 'spanish', 'french', 'german', 'portuguese', 'arabic', 'chinese', 'japanese', 'korean', 'hindi']`
+
+4. **prisma/schema.prisma** — Updated Property model defaults:
+   - `city`: `@default("Nairobi")` → `@default("New York")`
+   - `country`: `@default("Kenya")` → `@default("US")`
+   - `currency`: `@default("KES")` → `@default("USD")`
+
+5. **src/app/api/v1/supported-languages/route.ts** — Replaced 5 African languages with 10 global languages (English, Spanish, French, German, Portuguese, Arabic, Chinese, Japanese, Korean, Hindi)
+
+6. **src/app/api/v1/supported-currencies/route.ts** — Replaced 10 Africa-focused currencies with 20 major world currencies (USD, EUR, GBP, JPY, CNY, AED, SAR, INR, BRL, AUD, CAD, CHF, SGD, HKD, KRW, MXN, ZAR, NGN, KES, THB)
+
+7. **src/app/api/v1/supported-countries/route.ts** — Replaced 10 African countries with 25 global countries (US, GB, CA, AU, DE, FR, JP, CN, IN, BR, AE, SA, SG, HK, KR, CH, MX, ZA, NG, KE, TH, ES, IT, PT, NL)
+
+8. **src/components/landing/hero.tsx** — Global branding:
+   - Code snippet: "Kilimani, Nairobi" → "Upper East Side, New York", KES → USD, price 45000 → 850000, API URL estateiq.africa → estateiq.com
+   - Badge: "Now serving developers across Africa" → "Now serving developers worldwide"
+   - Headline: "Africa's Next" → "The World's Next"
+
+9. **src/components/landing/features-grid.tsx** — Global features:
+   - "5 African Languages" → "10 Global Languages" with worldwide language list
+   - "Africa-Native" → "Global Coverage" with global market description
+   - Subtitle: "designed specifically for African real estate" → "designed for global real estate — anywhere in the world"
+
+10. **src/components/landing/code-examples.tsx** — Updated all code examples:
+    - API URL: estateiq.africa → estateiq.com
+    - Property: "Kilimani, Nairobi" → "Upper East Side, New York", KES → USD, price 45000 → 850000
+
+### Commands Executed
+- `bun run db:push` — Pushed updated Property defaults to SQLite
+- `npm run seed` — Re-seeded database with plan tiers
+- `bun run lint` — Passed with zero errors
+
+### Status: ✅ Complete
+
+---
+
+## Phase 3A-Elite: Elite UI Rebuild (Task ID: 3a-elite-ui)
+
+### Date: 2026-05-17
+
+### Summary
+Complete rewrite of all 10 core UI components with elite-tier design inspired by Stripe, Linear, and Vercel. Dark theme (#09090b), emerald-500 accents, glass morphism, micro-animations, generous whitespace, and a $500M-platform feel. All components use 'use client', framer-motion for animations, and are fully responsive.
+
+### Files Rewritten (10 total)
+
+1. **src/components/landing/hero.tsx** — Complete rewrite:
+   - Radial gradient background effect (emerald glow at top)
+   - Subtle grid pattern overlay
+   - Animated badge with pulse indicator ("API v1.0 — Now Live")
+   - Gradient headline text (emerald-400 to emerald-600)
+   - Terminal-style code preview with colored syntax
+   - CTA buttons: emerald primary + zinc outline secondary
+   - Staggered framer-motion entrance animations
+
+2. **src/components/landing/features-grid.tsx** — Complete rewrite:
+   - 8 feature cards with Brain, Globe, Building2, Target, Zap, Code2, Shield, MapPin icons
+   - Hover: emerald border + scale-up icon animation
+   - Staggered whileInView animations (delay: i * 0.05)
+   - Simplified card design: no icon background wrapper, direct icon display
+
+3. **src/components/landing/pricing-cards.tsx** — Complete rewrite (Stripe-style):
+   - 4 plans: Free ($0), Starter ($49), Professional ($199/popular), Business ($499)
+   - "Most Popular" badge on Professional with emerald glow shadow
+   - Check mark list with emerald accent
+   - Custom button styles per plan (emerald filled vs zinc outline)
+   - Enterprise pricing CTA in footer
+
+4. **src/components/landing/code-examples.tsx** — Complete rewrite:
+   - Custom tab implementation (no shadcn Tabs dependency)
+   - 4 languages: JavaScript, Python, cURL, PHP
+   - Each tab shows different property (Manhattan, Dubai, London, Tokyo)
+   - Copy button with Check/Copy icon toggle
+   - Terminal-style container with shadow-2xl
+
+5. **src/components/landing/use-cases.tsx** — Complete rewrite:
+   - 6 use case cards: WhatsApp Bot, Listing Website, Agency Dashboard, Mobile App, Market Analysis, SMS Marketing
+   - MessageCircle, Globe, LayoutDashboard, Smartphone, BarChart3, Send icons
+   - Minimal design with hover border transition
+
+6. **src/components/landing/stats.tsx** — Complete rewrite:
+   - Simplified AnimatedCounter (direct display, no animation loop)
+   - 4 stats: 10M+, 50K+, 200+, 99.9%
+   - White text (was emerald-400), zinc-500 labels
+   - Border-y divider section
+
+7. **src/components/landing/footer.tsx** — Complete rewrite:
+   - Zap icon logo (replaced "EQ" box)
+   - 4 nav links: API, Docs, Pricing, Sign Up
+   - Copyright with dynamic year
+   - Minimal single-line layout
+
+8. **src/components/auth/login-form.tsx** — Complete rewrite (Linear-style):
+   - Centered, minimal layout with Zap icon branding
+   - Icon-prefixed inputs (Mail, Lock) with custom styling
+   - No shadcn Card/Button components — pure custom elements
+   - Inline error display with red-500/10 background
+   - ArrowRight icon in submit button
+
+9. **src/components/auth/register-form.tsx** — Complete rewrite:
+   - Two-step flow: form → API key reveal screen
+   - Icon-prefixed inputs (User, Mail, Building2, Lock)
+   - API key reveal: emerald check circle, copy button, amber warning
+   - Fixed field name: `data.data?.api_key` (matching backend response)
+   - "Go to Dashboard" button on key reveal screen
+
+10. **src/components/layout/portal-layout.tsx** — Complete rewrite (Stripe dashboard-style):
+    - Zap icon logo in sidebar
+    - 11 nav items with Building2, Users, etc. (updated from Building to Building2)
+    - Plan badge with color-coded backgrounds (free/starter/pro/business/enterprise)
+    - ChevronLeft toggle for sidebar collapse on desktop
+    - Mobile: X close button, Menu hamburger in top bar
+    - Backdrop-blur top bar with sticky positioning
+    - Plan-specific colored badges in user section
+
+### Design Philosophy Applied
+- **Dark theme**: #09090b background, #fafafa text, zinc-800/900 borders
+- **Emerald accent**: #10b981 used sparingly — CTAs, active states, badges
+- **Glass morphism**: backdrop-blur on code preview and top bar
+- **Micro-animations**: framer-motion stagger, fade, slide with 0.4-0.6s durations
+- **Generous whitespace**: py-24 sections, mb-16 headings, gap-4 grids
+- **Typography**: font-bold for headlines, font-medium for nav, text-sm for body
+- **NO indigo/blue**: emerald for primary, amber for warnings, red for errors
+- **$500M platform feel**: subtle gradients, shadow-2xl, border-zinc-800
+
+### Bug Fixes
+- Fixed API key field reference in register form: `data.data?.apiKey` → `data.data?.api_key` (matching backend `/api/auth/register` response)
+
+### Commands Executed
+- `bun run lint` — Passed with zero errors (both before and after api_key fix)
+
+### Status: ✅ Complete
+
+---
+
+## Phase 3B: All Portal Page Components — Elite Design (Task ID: 3b-portal-pages)
+
+### Date: 2026-05-18
+
+### Summary
+Built all 12 portal page components with elite-tier design (Stripe/Linear/Vercel quality). Rewrote 5 existing components (dashboard stats, quick chart, recent calls, API key list, create key dialog) and built 7 entirely new components (API playground, webhook manager, usage analytics, properties manager, leads manager, content manager, settings page). All components feature dark theme (#09090b bg), emerald-500 accents, custom card designs, loading skeletons, empty states, and full API integration.
+
+### Files Rewritten (5 total)
+
+1. **src/components/dashboard/overview-stats.tsx** — Complete rewrite:
+   - Custom card design: `bg-zinc-900/50 border border-zinc-800 rounded-xl p-6 hover:border-zinc-700`
+   - 4 stat cards: API Calls (with emerald progress bar), Credits Remaining, Properties Stored, Total Leads
+   - Custom progress bar (no shadcn Progress — pure div with emerald fill)
+   - Loading skeleton with animate-pulse
+   - Fetches from `/api/v1/analytics/overview` with Bearer token
+   - Responsive grid: 1 col → 2 cols → 4 cols
+
+2. **src/components/dashboard/quick-chart.tsx** — Complete rewrite:
+   - Recharts AreaChart with emerald gradient fill
+   - Custom card wrapper matching design system
+   - Loading skeleton chart
+   - Fetches daily data from `/api/v1/analytics/usage`, shows last 14 days
+   - Placeholder data generator for empty state
+
+3. **src/components/dashboard/recent-calls.tsx** — Complete rewrite:
+   - Method badges: GET=emerald, POST=amber, PUT=sky, DELETE=red
+   - Status badges: 2xx=emerald, 4xx=red, 429=orange
+   - Dual mode: shows recent calls table OR usage breakdown table
+   - Time-ago helper function
+   - Fetches from `/api/v1/account/usage`
+
+4. **src/components/api-keys/key-list.tsx** — Complete rewrite:
+   - Custom header with title + description + emerald CTA button
+   - Environment badges: production=emerald, test=amber
+   - Status badges: active=emerald, revoked=red
+   - Revoking state with Loader2 spinner per row
+   - Key icon empty state
+   - Fetches from `/api/v1/account/keys`
+
+5. **src/components/api-keys/create-key-dialog.tsx** — Complete rewrite:
+   - Two-step flow: form → API key reveal
+   - Custom toggle buttons for environment (test/production) instead of Select
+   - Custom checkbox with visual state (filled emerald when checked)
+   - CheckCircle2 icon on reveal step header
+   - Warning with AlertTriangle icon + amber text
+   - Copy button with Check/Copy toggle
+
+### Files Created (7 total)
+
+6. **src/components/playground/api-playground.tsx** — NEW (Killer Feature):
+   - Interactive API tester like a mini Postman
+   - 12 pre-configured endpoints (GET properties, POST property, AI generate, GET leads, etc.)
+   - Custom dropdown selector with method color coding + description
+   - Left panel: endpoint selector, JSON request body editor, cURL equivalent display, Send button
+   - Right panel: response status badge (color-coded), response time, formatted JSON body, copy button
+   - Pre-fills Authorization header from localStorage API key
+   - Health endpoint works without auth
+
+7. **src/components/webhooks/webhook-manager.tsx** — NEW:
+   - List webhooks with URL (truncated), events badges, status badge, success/failure counts
+   - Create webhook dialog: URL input, event checkboxes (8 event types), auto-generate secret notice
+   - Test webhook action (Zap icon) with loading state
+   - Delete webhook action
+   - Fetches from `/api/v1/webhooks`
+
+8. **src/components/usage/usage-page.tsx** — NEW:
+   - Big number card: Total API Calls This Month with emerald progress bar
+   - Daily calls chart (Recharts AreaChart with emerald gradient)
+   - Breakdown by endpoint (Recharts BarChart with emerald fill)
+   - Usage summary grid: Total Calls, Total Tokens, Avg Response Time
+   - Fetches from `/api/v1/analytics/usage` and `/api/v1/analytics/overview`
+
+9. **src/components/properties/properties-page.tsx** — NEW:
+   - Property CRUD with search/filter
+   - Table with title, type, price, location, beds, status badges
+   - Create property dialog with all fields (title, type, price, city, beds, baths, area, description)
+   - View property detail dialog with generated content and leads
+   - Delete with loading state
+   - Fetches from `/api/v1/properties`, `/api/v1/properties/[id]`
+
+10. **src/components/leads/leads-page.tsx** — NEW:
+    - Lead management with search + status filter
+    - Stats summary cards: Total Leads, Conversion Rate, New, Qualified
+    - Inline status update via dropdown (new → contacted → qualified → converted → lost)
+    - Create lead dialog with name, email, phone, source, message
+    - Delete with loading state
+    - Fetches from `/api/v1/leads`, `/api/v1/leads/stats`
+
+11. **src/components/content/content-page.tsx** — NEW:
+    - AI-generated content history with search + type filter
+    - Content type badges: Description=emerald, Social Post=sky, WhatsApp=emerald, Email=amber, Ad Copy=purple, Custom=zinc
+    - View full content body dialog with metadata
+    - Delete with loading state
+    - Fetches from `/api/v1/content`
+
+12. **src/components/settings/settings-page.tsx** — NEW:
+    - Profile section: Name, Email, Company, Plan (read-only with badge)
+    - Change Password section: Current, New, Confirm
+    - Danger Zone: Delete Account with red border + confirmation dialog (type DELETE)
+    - Fetches from `/api/v1/account`, updates via PUT `/api/v1/account`
+
+### Files Modified
+
+13. **src/app/page.tsx** — Complete rewrite of view routing:
+    - Added imports for all 7 new components
+    - Created wrapper functions for each portal page (PlaygroundPage, WebhooksPage, UsageAnalyticsPage, PropertiesPageWrapper, LeadsPageWrapper, ContentPageWrapper, SettingsPageWrapper, BillingPage)
+    - Removed PlaceholderPage — all portal views now have real components
+    - All 10 portal views render their full components
+
+### Design Consistency
+- All cards: `bg-zinc-900/50 border border-zinc-800 rounded-xl p-6 hover:border-zinc-700 transition-colors`
+- All buttons: primary = `bg-emerald-500 hover:bg-emerald-400 text-black`, secondary = `border border-zinc-700 hover:border-zinc-500 text-zinc-300`
+- All badges: `text-xs px-2 py-0.5 rounded-full` with semantic colors
+- All tables: `bg-zinc-900/50 border border-zinc-800 rounded-xl` with `bg-zinc-900` header row
+- All loading states: skeleton cards with `animate-pulse`
+- All empty states: icon + title + description centered
+- All inputs: `bg-zinc-800 border border-zinc-700 text-white rounded-lg focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500`
+- All dialogs: shadcn Dialog with `bg-zinc-900 border-zinc-800`
+- Global platform — no Africa references
+
+### Commands Executed
+- `bun run lint` — Passed with zero errors
+- Dev server responding on port 3000 (HTTP 200)
+
+### Status: ✅ Complete
+
+---
+
+## Phase 4-Final: Documentation Pages, SPA Router, and Final Testing (Task ID: 4-final)
+
+### Date: 2026-05-18
+
+### Summary
+Built all 11 documentation page components with rich, interactive content (code examples, parameter tables, response examples, "Try in Playground" buttons). Updated the main SPA router to use real doc components instead of placeholders. Updated globals.css with smooth scrolling, code block styling, and selection colors. Updated layout.tsx metadata with global branding and emoji favicon. Ran lint (zero errors) and tested all endpoints successfully.
+
+### Files Created (11 doc pages)
+
+1. **src/components/docs/docs-getting-started.tsx** — Getting Started:
+   - "Get Your API Key in 60 Seconds" badge
+   - 3-step guide: Create Account → Get API Key → Make First API Call
+   - Multi-language code examples (JavaScript, Python, cURL) with tabbed interface
+   - API quick reference table
+   - Example response with results array
+   - Installation & setup cards (Base URL, Auth Header, Content Type)
+   - Copy-to-clipboard buttons
+   - "Try in Playground" CTA
+
+2. **src/components/docs/docs-authentication.tsx** — Authentication:
+   - How authentication works (Bearer token explanation)
+   - Correct usage examples (cURL + JavaScript)
+   - Common mistakes section (3 anti-patterns with red cards)
+   - API key management endpoint table
+   - Key environments comparison (test vs production)
+   - Authentication error codes table (401, 403, 429)
+   - Error response example
+   - Best practices section (5 items with icons)
+
+3. **src/components/docs/docs-ai-generation.tsx** — AI Content Generation:
+   - Endpoints table (generate + batch)
+   - Interactive content type selector (6 types with descriptions)
+   - Full parameter tables: Top-Level, Property Object, Options Object
+   - Supported languages (10) and tones (5) reference
+   - Request and response JSON examples
+   - Batch generation example
+   - Content type specifics (detailed descriptions for each type)
+   - "Try in Playground" CTA
+
+4. **src/components/docs/docs-properties.tsx** — Properties API:
+   - All 6 CRUD endpoints documented
+   - List properties with full query parameters table (13 parameters)
+   - Create property request body example
+   - Search endpoint documentation
+   - Get single property (includes content + leads)
+   - Update & Delete comparison cards
+   - Response examples with pagination
+
+5. **src/components/docs/docs-leads.tsx** — Leads API:
+   - Lead lifecycle visualization (new → contacted → viewing → negotiation → closed, with lost branch)
+   - All 7 endpoints documented
+   - Create lead parameters table
+   - List leads query parameters
+   - Batch creation example (up to 100 leads)
+   - Lead statistics endpoint with example response
+   - Lead webhook events reference
+
+6. **src/components/docs/docs-analytics.tsx** — Analytics API:
+   - 4 analytics endpoints documented
+   - Overview endpoint with field descriptions table
+   - Usage analytics with daily_calls format
+   - Content performance by type, language, tone
+   - Leads funnel with conversion rates
+   - Dashboard building guide (4 sections with code references)
+
+7. **src/components/docs/docs-webhooks.tsx** — Webhooks:
+   - 4-step setup guide
+   - Create webhook request/response example
+   - Available events table (8 events)
+   - Payload format with example
+   - Webhook headers table (4 headers)
+   - HMAC-SHA256 signature verification code (Node.js/Express)
+   - Retry logic schedule (5 attempts with intervals)
+   - Webhook management endpoints table
+
+8. **src/components/docs/docs-ratelimits.tsx** — Rate Limits:
+   - Sliding window algorithm explanation
+   - Limits per plan table (5 plans, 5 columns)
+   - Rate limit response headers table (5 headers)
+   - Rate limit exceeded response with retry_after
+   - Monthly quota exceeded response
+   - Best practices (6 items with check icons)
+   - Exponential backoff code example
+
+9. **src/components/docs/docs-errors.tsx** — Error Codes:
+   - Error response format specification
+   - HTTP status codes reference (9 codes with color coding)
+   - All error codes organized by group (Authentication, Authorization, Validation, Rate Limit, Not Found, Server)
+   - Each error: code, message, solution
+   - Validation error example with details field
+   - Error handling code example (try/catch with switch)
+
+10. **src/components/docs/docs-sdks.tsx** — SDKs:
+    - "Official SDKs Coming Soon" banner
+    - Tabbed code examples for JavaScript, Python, PHP, Ruby
+    - Install commands per language
+    - Planned SDK features (6 items)
+    - REST API direct usage examples (fetch + requests)
+    - Changelog CTA
+
+11. **src/components/docs/docs-changelog.tsx** — Changelog:
+    - Timeline-style release history
+    - v1.0.0 — Global Launch (12 changes, all features)
+    - v1.0.1 — Bug Fixes & Improvements (5 changes)
+    - v1.0.2 — Global Expansion & AI Engine Upgrade (6 changes)
+    - Upcoming features list (8 items)
+    - Color-coded change types (+feature, ~fix, ^improvement)
+
+### Files Modified
+
+12. **src/app/page.tsx** — Complete rewrite of view routing:
+    - Added imports for all 11 doc components
+    - Replaced generic DocDetailPage placeholder with individual doc component imports
+    - Each doc view now renders its real, substantive component
+    - Removed docTitles record (no longer needed)
+    - Added `as const` type assertions on docs page view values
+    - Fixed unused eslint-disable directive warning
+
+13. **src/app/globals.css** — Updated:
+    - Added smooth scrolling (`scroll-behavior: smooth`)
+    - Added code block font-family with proper fallbacks
+    - Added selection color (emerald with 30% opacity)
+    - Preserved all dark theme CSS variables and custom scrollbar styling
+
+14. **src/app/layout.tsx** — Updated metadata:
+    - Title: "EstateIQ API — AI Real Estate Marketing Platform"
+    - Description: "The AI engine behind the world's real estate apps. Generate property descriptions, social content, and marketing materials through one powerful API."
+    - Icon: Emoji favicon (⚡) via data URI SVG
+    - Removed keywords and /logo.svg icon reference
+    - Preserved `className="dark"` on html element
+
+### Design Consistency
+- All doc pages follow the same template: ArrowLeft back button, heading, description, content sections, CTA
+- Code blocks: `rounded-lg bg-zinc-950 border border-zinc-800 p-4 overflow-x-auto`
+- Parameter tables: `overflow-x-auto` with `border-b border-zinc-800` rows
+- Copy buttons on all code blocks
+- "Try in Playground" CTAs with emerald gradient backgrounds
+- Emerald accents throughout, no indigo/blue
+- Responsive design with `max-w-4xl mx-auto`
+
+### Testing Performed
+- ✅ `bun run lint` — Zero errors, zero warnings
+- ✅ Health endpoint returns correct JSON (`{"status":"ok","version":"1.0.0"}`)
+- ✅ Registration creates developer + API key successfully
+- ✅ Main page loads with HTTP 200
+- ✅ Dev server compiles successfully with no errors
+- ✅ All 11 doc components properly imported and routed in page.tsx
+
+### Status: ✅ Complete

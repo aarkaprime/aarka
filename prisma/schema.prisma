@@ -109,10 +109,10 @@ model Property {
   propertyType  String    @default("apartment")
   location      String
   neighborhood  String?
-  city          String    @default("Nairobi")
-  country       String    @default("Kenya")
+  city          String    @default("New York")
+  country       String    @default("US")
   price         Float
-  currency      String    @default("KES")
+  currency      String    @default("USD")
   bedrooms      Int       @default(0)
   bathrooms     Int       @default(0)
   areaSqm       Float?

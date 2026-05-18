@@ -14,21 +14,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "EstateIQ — AI-Powered Real Estate API for Africa",
-  description:
-    "Generate property descriptions, social media content, WhatsApp messages, and more through one powerful API. Build your real estate app in hours, not months.",
-  keywords: [
-    "EstateIQ",
-    "real estate API",
-    "Africa",
-    "AI content generation",
-    "property management",
-    "developer API",
-  ],
-  icons: {
-    icon: "/logo.svg",
-  },
-};
+  title: "EstateIQ API — AI Real Estate Marketing Platform",
+  description: "The AI engine behind the world's real estate apps. Generate property descriptions, social content, and marketing materials through one powerful API.",
+  icons: { icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>" },
+}
 
 export default function RootLayout({
   children,

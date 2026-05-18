@@ -1,8 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import {
   Table,
   TableBody,
@@ -21,19 +19,25 @@ interface UsageLog {
   createdAt: string
 }
 
+interface UsageEntry {
+  endpoint: string
+  method: string
+  count: number
+}
+
 const methodColors: Record<string, string> = {
-  GET: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-  POST: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20',
-  PUT: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
-  DELETE: 'bg-red-500/10 text-red-400 border-red-500/20',
-  PATCH: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+  GET: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20',
+  POST: 'bg-amber-500/10 text-amber-400 border border-amber-500/20',
+  PUT: 'bg-sky-500/10 text-sky-400 border border-sky-500/20',
+  DELETE: 'bg-red-500/10 text-red-400 border border-red-500/20',
+  PATCH: 'bg-amber-500/10 text-amber-400 border border-amber-500/20',
 }
 
 function getStatusColor(status: number): string {
-  if (status >= 200 && status < 300) return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
-  if (status === 429) return 'bg-orange-500/10 text-orange-400 border-orange-500/20'
-  if (status >= 400) return 'bg-red-500/10 text-red-400 border-red-500/20'
-  return 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20'
+  if (status >= 200 && status < 300) return 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+  if (status === 429) return 'bg-orange-500/10 text-orange-400 border border-orange-500/20'
+  if (status >= 400) return 'bg-red-500/10 text-red-400 border border-red-500/20'
+  return 'bg-zinc-500/10 text-zinc-400 border border-zinc-500/20'
 }
 
 function timeAgo(dateStr: string): string {
@@ -51,21 +55,24 @@ function timeAgo(dateStr: string): string {
 
 export function RecentCalls() {
   const [calls, setCalls] = useState<UsageLog[]>([])
+  const [usageBreakdown, setUsageBreakdown] = useState<UsageEntry[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const apiKey = localStorage.getItem('eq_api_key') || ''
         const res = await fetch('/api/v1/account/usage', {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('eq_api_key') || ''}`,
-          },
+          headers: { Authorization: `Bearer ${apiKey}` },
         })
         const result = await res.json()
         if (result.success) {
-          // The usage endpoint returns aggregated data, not individual logs.
-          // For demo purposes, we'll show the endpoint/method breakdown.
-          setCalls([])
+          if (result.data?.usage_breakdown) {
+            setUsageBreakdown(result.data.usage_breakdown)
+          }
+          if (result.data?.recent_calls) {
+            setCalls(result.data.recent_calls.slice(0, 10))
+          }
         }
       } catch {
         // Silently fail
@@ -78,88 +85,111 @@ export function RecentCalls() {
 
   if (loading) {
     return (
-      <Card className="bg-zinc-900 border-zinc-800">
-        <CardHeader>
-          <CardTitle className="text-white">Recent API Calls</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-10 bg-zinc-800 rounded animate-pulse" />
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-6 animate-pulse">
+        <div className="h-6 w-36 bg-zinc-800 rounded mb-6" />
+        <div className="space-y-3">
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="h-10 bg-zinc-800/50 rounded" />
+          ))}
+        </div>
+      </div>
     )
   }
 
-  if (calls.length === 0) {
+  // If we have recent calls, show them in a table
+  if (calls.length > 0) {
     return (
-      <Card className="bg-zinc-900 border-zinc-800">
-        <CardHeader>
-          <CardTitle className="text-white">Recent API Calls</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-center py-8">
-            <p className="text-zinc-500 text-sm">No API calls recorded yet.</p>
-            <p className="text-zinc-600 text-xs mt-1">
-              Make your first API call to see it appear here.
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-6 hover:border-zinc-700 transition-colors">
+        <h3 className="text-white font-semibold mb-4">Recent API Calls</h3>
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow className="border-zinc-800 hover:bg-transparent">
+                <TableHead className="text-zinc-400">Endpoint</TableHead>
+                <TableHead className="text-zinc-400">Method</TableHead>
+                <TableHead className="text-zinc-400">Status</TableHead>
+                <TableHead className="text-zinc-400 hidden sm:table-cell">Latency</TableHead>
+                <TableHead className="text-zinc-400">Time</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {calls.map((call) => (
+                <TableRow key={call.id} className="border-zinc-800">
+                  <TableCell className="text-zinc-300 font-mono text-xs">
+                    {call.endpoint}
+                  </TableCell>
+                  <TableCell>
+                    <span className={`text-xs px-2 py-0.5 rounded-full ${methodColors[call.method] || methodColors.GET}`}>
+                      {call.method}
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    <span className={`text-xs px-2 py-0.5 rounded-full ${getStatusColor(call.statusCode)}`}>
+                      {call.statusCode}
+                    </span>
+                  </TableCell>
+                  <TableCell className="text-zinc-400 text-xs hidden sm:table-cell">
+                    {call.responseTimeMs}ms
+                  </TableCell>
+                  <TableCell className="text-zinc-500 text-xs">
+                    {timeAgo(call.createdAt)}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      </div>
     )
   }
 
-  return (
-    <Card className="bg-zinc-900 border-zinc-800">
-      <CardHeader>
-        <CardTitle className="text-white">Recent API Calls</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow className="border-zinc-800 hover:bg-transparent">
-              <TableHead className="text-zinc-400">Endpoint</TableHead>
-              <TableHead className="text-zinc-400">Method</TableHead>
-              <TableHead className="text-zinc-400">Status</TableHead>
-              <TableHead className="text-zinc-400 hidden sm:table-cell">Response Time</TableHead>
-              <TableHead className="text-zinc-400">Time</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {calls.map((call) => (
-              <TableRow key={call.id} className="border-zinc-800">
-                <TableCell className="text-zinc-300 font-mono text-xs">
-                  {call.endpoint}
-                </TableCell>
-                <TableCell>
-                  <Badge
-                    variant="outline"
-                    className={`text-[10px] ${methodColors[call.method] || methodColors.GET}`}
-                  >
-                    {call.method}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  <Badge
-                    variant="outline"
-                    className={`text-[10px] ${getStatusColor(call.statusCode)}`}
-                  >
-                    {call.statusCode}
-                  </Badge>
-                </TableCell>
-                <TableCell className="text-zinc-400 text-xs hidden sm:table-cell">
-                  {call.responseTimeMs}ms
-                </TableCell>
-                <TableCell className="text-zinc-500 text-xs">
-                  {timeAgo(call.createdAt)}
-                </TableCell>
+  // If we have usage breakdown but no individual calls, show the breakdown
+  if (usageBreakdown.length > 0) {
+    return (
+      <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-6 hover:border-zinc-700 transition-colors">
+        <h3 className="text-white font-semibold mb-4">API Usage Breakdown</h3>
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow className="border-zinc-800 hover:bg-transparent">
+                <TableHead className="text-zinc-400">Endpoint</TableHead>
+                <TableHead className="text-zinc-400">Method</TableHead>
+                <TableHead className="text-zinc-400 text-right">Calls</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </CardContent>
-    </Card>
+            </TableHeader>
+            <TableBody>
+              {usageBreakdown.map((entry, i) => (
+                <TableRow key={`${entry.endpoint}-${entry.method}-${i}`} className="border-zinc-800">
+                  <TableCell className="text-zinc-300 font-mono text-xs">
+                    {entry.endpoint}
+                  </TableCell>
+                  <TableCell>
+                    <span className={`text-xs px-2 py-0.5 rounded-full ${methodColors[entry.method] || methodColors.GET}`}>
+                      {entry.method}
+                    </span>
+                  </TableCell>
+                  <TableCell className="text-zinc-400 text-xs text-right">
+                    {entry.count.toLocaleString()}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      </div>
+    )
+  }
+
+  // Empty state
+  return (
+    <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-6 hover:border-zinc-700 transition-colors">
+      <h3 className="text-white font-semibold mb-4">Recent API Calls</h3>
+      <div className="text-center py-8">
+        <p className="text-zinc-500 text-sm">No API calls recorded yet.</p>
+        <p className="text-zinc-600 text-xs mt-1">
+          Make your first API call to see it appear here.
+        </p>
+      </div>
+    </div>
   )
 }

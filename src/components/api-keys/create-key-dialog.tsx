@@ -1,10 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Copy, Check, Loader2, AlertTriangle } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { Copy, Check, Loader2, AlertTriangle, CheckCircle2 } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -12,14 +9,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import { Checkbox } from '@/components/ui/checkbox'
 import { useAppStore } from '@/store/app-store'
 
 interface CreateKeyDialogProps {
@@ -48,11 +37,12 @@ export function CreateKeyDialog({ open, onClose, onCreated }: CreateKeyDialogPro
 
     setLoading(true)
     try {
+      const apiKey = localStorage.getItem('eq_api_key') || ''
       const res = await fetch('/api/v1/account/keys', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('eq_api_key') || ''}`,
+          Authorization: `Bearer ${apiKey}`,
         },
         body: JSON.stringify({ name: name.trim(), environment }),
       })
@@ -106,52 +96,59 @@ export function CreateKeyDialog({ open, onClose, onCreated }: CreateKeyDialogPro
             </DialogHeader>
             <div className="space-y-4 mt-4">
               <div className="space-y-2">
-                <Label htmlFor="key-name" className="text-zinc-300">
-                  Key Name
-                </Label>
-                <Input
-                  id="key-name"
+                <label className="text-sm text-zinc-300 font-medium">Key Name</label>
+                <input
                   placeholder="e.g., Production API Key"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="bg-zinc-800 border-zinc-700 text-white placeholder:text-zinc-500 focus:border-emerald-500 focus:ring-emerald-500"
+                  className="w-full bg-zinc-800 border border-zinc-700 text-white placeholder:text-zinc-500 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
                 />
               </div>
               <div className="space-y-2">
-                <Label className="text-zinc-300">Environment</Label>
-                <Select value={environment} onValueChange={setEnvironment}>
-                  <SelectTrigger className="bg-zinc-800 border-zinc-700 text-white focus:border-emerald-500 focus:ring-emerald-500">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="bg-zinc-900 border-zinc-700">
-                    <SelectItem value="test" className="text-zinc-300 focus:bg-zinc-800 focus:text-white">
-                      Test
-                    </SelectItem>
-                    <SelectItem value="live" className="text-zinc-300 focus:bg-zinc-800 focus:text-white">
-                      Production
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
+                <label className="text-sm text-zinc-300 font-medium">Environment</label>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setEnvironment('test')}
+                    className={`flex-1 text-sm px-4 py-2 rounded-lg border transition-colors cursor-pointer ${
+                      environment === 'test'
+                        ? 'bg-amber-500/10 border-amber-500/30 text-amber-400'
+                        : 'bg-zinc-800 border-zinc-700 text-zinc-400 hover:border-zinc-600'
+                    }`}
+                  >
+                    Test
+                  </button>
+                  <button
+                    onClick={() => setEnvironment('production')}
+                    className={`flex-1 text-sm px-4 py-2 rounded-lg border transition-colors cursor-pointer ${
+                      environment === 'production'
+                        ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
+                        : 'bg-zinc-800 border-zinc-700 text-zinc-400 hover:border-zinc-600'
+                    }`}
+                  >
+                    Production
+                  </button>
+                </div>
               </div>
-              <Button
+              <button
                 onClick={handleCreate}
-                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer"
                 disabled={loading}
+                className="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-medium text-sm px-4 py-2 rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
               >
-                {loading && <Loader2 className="mr-2 w-4 h-4 animate-spin" />}
+                {loading && <Loader2 className="w-4 h-4 animate-spin" />}
                 Create Key
-              </Button>
+              </button>
             </div>
           </>
         ) : (
           <>
             <DialogHeader>
               <DialogTitle className="text-white flex items-center gap-2">
-                <AlertTriangle className="w-5 h-5 text-amber-400" />
+                <CheckCircle2 className="w-5 h-5 text-emerald-400" />
                 Your API Key
               </DialogTitle>
-              <DialogDescription className="text-amber-400 font-medium">
-                IMPORTANT: Copy this key NOW. You will NEVER be able to see it again.
+              <DialogDescription className="text-amber-400 font-medium flex items-center gap-1.5">
+                <AlertTriangle className="w-3.5 h-3.5" />
+                Copy this key NOW. You will NEVER be able to see it again.
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 mt-4">
@@ -160,36 +157,39 @@ export function CreateKeyDialog({ open, onClose, onCreated }: CreateKeyDialogPro
                   {createdKey}
                 </code>
               </div>
-              <Button
-                variant="outline"
-                className="w-full border-zinc-700 text-zinc-300 hover:bg-zinc-800 cursor-pointer"
+              <button
+                className="w-full border border-zinc-700 hover:border-zinc-500 text-zinc-300 font-medium text-sm px-4 py-2 rounded-lg transition-colors flex items-center justify-center gap-2 cursor-pointer bg-transparent"
                 onClick={handleCopy}
               >
                 {copied ? (
-                  <Check className="w-4 h-4 mr-2 text-emerald-400" />
+                  <Check className="w-4 h-4 text-emerald-400" />
                 ) : (
-                  <Copy className="w-4 h-4 mr-2" />
+                  <Copy className="w-4 h-4" />
                 )}
                 {copied ? 'Copied!' : 'Copy to Clipboard'}
-              </Button>
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="confirm-saved"
-                  checked={confirmed}
-                  onCheckedChange={(v) => setConfirmed(v === true)}
-                  className="border-zinc-600 data-[state=checked]:bg-emerald-600 data-[state=checked]:border-emerald-600"
-                />
-                <Label htmlFor="confirm-saved" className="text-sm text-zinc-400 cursor-pointer">
+              </button>
+              <label className="flex items-center gap-3 cursor-pointer group">
+                <div
+                  onClick={() => setConfirmed(!confirmed)}
+                  className={`w-4 h-4 rounded border flex items-center justify-center transition-colors cursor-pointer ${
+                    confirmed
+                      ? 'bg-emerald-500 border-emerald-500'
+                      : 'border-zinc-600 hover:border-zinc-500'
+                  }`}
+                >
+                  {confirmed && <Check className="w-3 h-3 text-black" />}
+                </div>
+                <span className="text-sm text-zinc-400 group-hover:text-zinc-300 transition-colors">
                   I have saved this key in a secure location
-                </Label>
-              </div>
-              <Button
+                </span>
+              </label>
+              <button
                 onClick={handleClose}
-                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer"
                 disabled={!confirmed}
+                className="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-medium text-sm px-4 py-2 rounded-lg transition-colors disabled:opacity-50 cursor-pointer"
               >
                 Done
-              </Button>
+              </button>
             </div>
           </>
         )}
