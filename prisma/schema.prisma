@@ -101,68 +101,21 @@ model Plan {
   createdAt       DateTime @default(now())
 }
 
-model Property {
+model AiModel {
   id            String    @id @default(cuid())
-  developerId   String
-  externalId    String?
-  title         String
-  propertyType  String    @default("apartment")
-  location      String
-  neighborhood  String?
-  city          String    @default("New York")
-  country       String    @default("US")
-  price         Float
-  currency      String    @default("USD")
-  bedrooms      Int       @default(0)
-  bathrooms     Int       @default(0)
-  areaSqm       Float?
-  features      String
-  description   String?
-  status        String    @default("active")
-  metadata      String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-
-  @@index([developerId])
-  @@index([status])
-  @@index([propertyType])
-}
-
-model Lead {
-  id            String    @id @default(cuid())
-  developerId   String
-  propertyId    String?
-  externalId    String?
+  slug          String    @unique
   name          String
-  email         String?
-  phone         String?
-  message       String?
-  source        String    @default("api")
-  status        String    @default("new")
-  metadata      String?
+  provider      String
+  description   String?
+  inputPrice1M  Float     @default(0)
+  outputPrice1M Float     @default(0)
+  contextWindow Int       @default(4096)
+  maxTokens     Int       @default(4096)
+  status        String    @default("active")
+  capabilities  String    @default("chat")
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  @@index([developerId])
-  @@index([propertyId])
+  @@index([provider])
   @@index([status])
-}
-
-model GeneratedContent {
-  id            String    @id @default(cuid())
-  developerId   String
-  propertyId    String?
-  externalId    String?
-  contentType   String
-  platform      String?
-  language      String    @default("english")
-  tone          String?
-  title         String
-  body          String
-  tokensUsed    Int       @default(0)
-  aiModel       String    @default("deepseek-chat")
-  createdAt     DateTime  @default(now())
-
-  @@index([developerId])
-  @@index([propertyId])
 }

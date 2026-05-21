@@ -112,10 +112,10 @@ export function RegisterForm() {
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-2 mb-4">
             <Zap className="w-8 h-8 text-emerald-500" />
-            <span className="text-2xl font-bold text-white">EstateIQ</span>
+            <span className="text-2xl font-bold text-white">NexusAPI</span>
           </div>
           <h1 className="text-xl font-semibold text-white">Create your account</h1>
-          <p className="text-zinc-500 text-sm mt-1">Start building with the AI real estate API</p>
+          <p className="text-zinc-500 text-sm mt-1">Start building with the unified AI API</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-3">

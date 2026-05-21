@@ -15,11 +15,11 @@ export function DocsSDKs() {
     setTimeout(() => setCopiedId(null), 2000)
   }
 
-  const jsCode = `import { EstateIQ } from '@estateiq/sdk';
+  const jsCode = `import { NexusAPI } from '@nexusapi/sdk';
 
-const client = new EstateIQ({
+const client = new NexusAPI({
   apiKey: process.env.ESTATEIQ_API_KEY,
-  baseURL: 'https://api.estateiq.com/v1'
+  baseURL: 'https://api.nexusapi.com/v1'
 });
 
 // Generate property descriptions
@@ -62,9 +62,9 @@ const lead = await client.leads.create({
 // Get analytics overview
 const analytics = await client.analytics.overview();`
 
-  const pythonCode = `from estateiq import EstateIQ
+  const pythonCode = `from nexusapi import NexusAPI
 
-client = EstateIQ(api_key="ei_sk_your_api_key_here")
+client = NexusAPI(api_key="ei_sk_your_api_key_here")
 
 # Generate property descriptions
 result = client.ai.generate(
@@ -108,7 +108,7 @@ analytics = client.analytics.overview()`
 
   const phpCode = `<?php
 
-use EstateIQ\\Client;
+use NexusAPI\\Client;
 
 $client = new Client('ei_sk_your_api_key_here');
 
@@ -149,9 +149,9 @@ $lead = $client->leads()->create([
     'property_id' => 'prop_abc123'
 ]);`
 
-  const rubyCode = `require 'estateiq'
+  const rubyCode = `require 'nexusapi'
 
-client = EstateIQ::Client.new(api_key: 'ei_sk_your_api_key_here')
+client = NexusAPI::Client.new(api_key: 'ei_sk_your_api_key_here')
 
 # Generate property descriptions
 result = client.ai.generate(
@@ -198,10 +198,10 @@ lead = client.leads.create(
   }
 
   const tabs = [
-    { id: 'js' as const, label: 'JavaScript / Node.js', install: 'npm install @estateiq/sdk' },
-    { id: 'python' as const, label: 'Python', install: 'pip install estateiq' },
-    { id: 'php' as const, label: 'PHP', install: 'composer require estateiq/sdk' },
-    { id: 'ruby' as const, label: 'Ruby', install: 'gem install estateiq' },
+    { id: 'js' as const, label: 'JavaScript / Node.js', install: 'npm install @nexusapi/sdk' },
+    { id: 'python' as const, label: 'Python', install: 'pip install nexusapi' },
+    { id: 'php' as const, label: 'PHP', install: 'composer require nexusapi/sdk' },
+    { id: 'ruby' as const, label: 'Ruby', install: 'gem install nexusapi' },
   ]
 
   return (
@@ -219,7 +219,7 @@ lead = client.leads.create(
           <h1 className="text-3xl font-bold text-white">SDKs</h1>
         </div>
         <p className="text-zinc-400 text-lg mb-8">
-          Official client libraries to help you integrate EstateIQ faster. Type-safe, documented, and auto-generated from our OpenAPI spec.
+          Official client libraries to help you integrate NexusAPI faster. Type-safe, documented, and auto-generated from our OpenAPI spec.
         </p>
 
         {/* Coming soon banner */}
@@ -300,13 +300,13 @@ lead = client.leads.create(
         <div className="mb-10">
           <h2 className="text-xl font-semibold text-white mb-4">Using the REST API Directly</h2>
           <p className="text-zinc-400 text-sm mb-4">
-            Until the official SDKs are released, you can use any HTTP client to call the EstateIQ REST API. Here are minimal examples:
+            Until the official SDKs are released, you can use any HTTP client to call the NexusAPI REST API. Here are minimal examples:
           </p>
           <div className="space-y-4">
             <div className="rounded-lg bg-zinc-900/50 border border-zinc-800 p-5">
               <h3 className="text-white font-medium text-sm mb-2">JavaScript (fetch)</h3>
               <div className="rounded-lg bg-zinc-950 border border-zinc-800 p-3 overflow-x-auto">
-                <pre className="text-sm text-zinc-300 font-mono whitespace-pre">{`const response = await fetch('https://api.estateiq.com/v1/ai/generate', {
+                <pre className="text-sm text-zinc-300 font-mono whitespace-pre">{`const response = await fetch('https://api.nexusapi.com/v1/ai/generate', {
   method: 'POST',
   headers: {
     'Authorization': \`Bearer \${process.env.ESTATEIQ_API_KEY}\`,
@@ -327,7 +327,7 @@ const data = await response.json();`}</pre>
                 <pre className="text-sm text-zinc-300 font-mono whitespace-pre">{`import requests
 
 response = requests.post(
-    'https://api.estateiq.com/v1/ai/generate',
+    'https://api.nexusapi.com/v1/ai/generate',
     headers={
         'Authorization': f'Bearer {os.environ["ESTATEIQ_API_KEY"]}',
         'Content-Type': 'application/json'

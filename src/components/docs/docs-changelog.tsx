@@ -10,7 +10,7 @@ export function DocsChangelog() {
     {
       version: 'v1.0.0',
       date: 'March 4, 2026',
-      title: 'EstateIQ API v1.0 — Global Launch',
+      title: 'NexusAPI API v1.0 — Global Launch',
       type: 'major' as const,
       changes: [
         { type: 'feature' as const, desc: 'AI content generation engine with 6 content types: property descriptions, social posts, WhatsApp messages, email campaigns, ad copy, and custom content' },
@@ -79,7 +79,7 @@ export function DocsChangelog() {
 
         <h1 className="text-3xl font-bold text-white mb-4">Changelog</h1>
         <p className="text-zinc-400 text-lg mb-8">
-          Follow the evolution of the EstateIQ API. Every release, feature, and fix documented here.
+          Follow the evolution of the NexusAPI API. Every release, feature, and fix documented here.
         </p>
 
         {/* Releases */}
@@ -152,7 +152,7 @@ export function DocsChangelog() {
             Have a feature request? We&apos;d love to hear from you.
           </p>
           <p className="text-zinc-600 text-xs mt-1">
-            Reach out at support@estateiq.com or open an issue on GitHub.
+            Reach out at support@nexusapi.com or open an issue on GitHub.
           </p>
         </div>
       </div>

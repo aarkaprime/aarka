@@ -8,7 +8,7 @@ const tabs = ['JavaScript', 'Python', 'cURL', 'PHP'] as const
 
 const codeExamples: Record<string, string> = {
   JavaScript: `const response = await fetch(
-  'https://api.estateiq.com/v1/ai/generate',
+  'https://api.nexusapi.com/v1/ai/generate',
   {
     method: 'POST',
     headers: {
@@ -39,7 +39,7 @@ console.log(result.data.results[0].body);`,
   Python: `import requests
 
 response = requests.post(
-    'https://api.estateiq.com/v1/ai/generate',
+    'https://api.nexusapi.com/v1/ai/generate',
     headers={
         'Authorization': 'Bearer ei_sk_YOUR_API_KEY',
         'Content-Type': 'application/json',
@@ -64,7 +64,7 @@ data = response.json()
 for post in data['data']['results']:
     print(post['body'])`,
 
-  cURL: `curl -X POST https://api.estateiq.com/v1/ai/generate \\
+  cURL: `curl -X POST https://api.nexusapi.com/v1/ai/generate \\
   -H "Authorization: Bearer ei_sk_YOUR_API_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -81,7 +81,7 @@ for post in data['data']['results']:
   }'`,
 
   PHP: `<?php
-$ch = curl_init('https://api.estateiq.com/v1/ai/generate');
+$ch = curl_init('https://api.nexusapi.com/v1/ai/generate');
 curl_setopt($ch, CURLOPT_POST, true);
 curl_setopt($ch, CURLOPT_HTTPHEADER, [
     'Authorization: Bearer ei_sk_YOUR_API_KEY',

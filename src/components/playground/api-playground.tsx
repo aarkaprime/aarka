@@ -209,7 +209,7 @@ export function ApiPlayground() {
 
   const getCurlCommand = () => {
     const apiKey = localStorage.getItem('eq_api_key') || ''
-    let cmd = `curl -X ${selected.method} https://api.estateiq.com${selected.path}`
+    let cmd = `curl -X ${selected.method} https://api.nexusapi.com${selected.path}`
     cmd += ` \\\n  -H "Content-Type: application/json"`
     if (selected.path !== '/api/v1/health' && apiKey) {
       cmd += ` \\\n  -H "Authorization: Bearer ${apiKey.slice(0, 10)}..."`

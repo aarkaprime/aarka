@@ -25,9 +25,9 @@ export async function triggerWebhook(developerId: string, event: string, payload
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-EstateIQ-Event': event,
-          'X-EstateIQ-Signature': `sha256=${signature}`,
-          'X-EstateIQ-Delivery': deliveryId,
+          'X-NexusAPI-Event': event,
+          'X-NexusAPI-Signature': `sha256=${signature}`,
+          'X-NexusAPI-Delivery': deliveryId,
         },
         body,
       })

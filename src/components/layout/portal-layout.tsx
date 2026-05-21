@@ -76,7 +76,7 @@ export function PortalLayout({ children }: { children: ReactNode }) {
         <div className="p-4 border-b border-zinc-800/50 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Zap className="w-6 h-6 text-emerald-500" />
-            <span className="font-bold text-white">EstateIQ</span>
+            <span className="font-bold text-white">NexusAPI</span>
           </div>
           {isMobile && (
             <button onClick={() => setSidebarOpen(false)} className="p-1 text-zinc-400 hover:text-white cursor-pointer">

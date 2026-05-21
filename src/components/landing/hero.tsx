@@ -36,10 +36,10 @@ export function Hero() {
           transition={{ duration: 0.5, delay: 0.1 }}
           className="text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight text-white leading-[1.1] mb-6"
         >
-          The AI Engine Behind
+          One API for All
           <br />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-600">
-            The World&apos;s Real Estate Apps
+            AI Models
           </span>
         </motion.h1>
 
@@ -50,7 +50,7 @@ export function Hero() {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="text-lg sm:text-xl text-zinc-400 max-w-2xl mx-auto mb-10 leading-relaxed"
         >
-          Generate property descriptions, social media content, WhatsApp messages, email campaigns, and ad copy — through one powerful API. Build your real estate app in hours, not months.
+          Access DeepSeek, Qwen, GLM, Moonshot, Yi, Baichuan and more through one unified API. The cheapest AI models on the planet, aggregated for developers. Build AI-powered apps in hours, not months.
         </motion.p>
 
         {/* CTAs */}
@@ -90,14 +90,14 @@ export function Hero() {
               <span className="ml-2 text-xs text-zinc-500 font-mono">terminal</span>
             </div>
             <div className="p-4 font-mono text-sm text-left">
-              <div className="text-zinc-500">$ curl -X POST https://api.estateiq.com/v1/ai/generate \</div>
-              <div className="text-zinc-500 ml-4">-H <span className="text-emerald-400">&quot;Authorization: Bearer ei_sk_...&quot;</span> \</div>
-              <div className="text-zinc-500 ml-4">-d <span className="text-amber-300">{`'{ "content_type": "property_description" }'`}</span></div>
+              <div className="text-zinc-500">$ curl -X POST https://api.nexusapi.dev/v1/chat/completions \</div>
+              <div className="text-zinc-500 ml-4">-H <span className="text-emerald-400">&quot;Authorization: Bearer nxai_...&quot;</span> \</div>
+              <div className="text-zinc-500 ml-4">-d <span className="text-amber-300">{`'{ "model": "deepseek-chat", "messages": [...] }'`}</span></div>
               <div className="mt-2 text-zinc-500">{'}'}</div>
               <div className="mt-2 text-emerald-400">{'{'}</div>
               <div className="text-zinc-300 ml-2">&quot;data&quot;: {'{'}</div>
-              <div className="text-zinc-300 ml-4">&quot;results&quot;: [<span className="text-emerald-400">3 AI descriptions</span>],</div>
-              <div className="text-zinc-300 ml-4">&quot;tokens_used&quot;: 847</div>
+              <div className="text-zinc-300 ml-4">&quot;choices&quot;: [<span className="text-emerald-400">AI response</span>],</div>
+              <div className="text-zinc-300 ml-4">&quot;tokens_used&quot;: 247</div>
               <div className="text-zinc-300 ml-2">{'}'}</div>
               <div className="text-emerald-400">{'}'}</div>
             </div>

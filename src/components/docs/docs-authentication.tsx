@@ -26,7 +26,7 @@ export function DocsAuthentication() {
 
         <h1 className="text-3xl font-bold text-white mb-4">Authentication</h1>
         <p className="text-zinc-400 text-lg mb-8">
-          All EstateIQ API endpoints require authentication via Bearer token in the Authorization header, except the health check endpoint.
+          All NexusAPI API endpoints require authentication via Bearer token in the Authorization header, except the health check endpoint.
         </p>
 
         {/* Overview */}
@@ -39,7 +39,7 @@ export function DocsAuthentication() {
               </div>
               <div>
                 <p className="text-zinc-300 text-sm leading-relaxed">
-                  EstateIQ uses API keys for authentication. Each API key starts with <code className="text-emerald-400 bg-zinc-800 px-1.5 py-0.5 rounded text-xs">ei_sk_</code> and is sent as a Bearer token in the <code className="text-emerald-400 bg-zinc-800 px-1.5 py-0.5 rounded text-xs">Authorization</code> header. API keys are tied to your developer account and inherit your plan&apos;s rate limits and quotas.
+                  NexusAPI uses API keys for authentication. Each API key starts with <code className="text-emerald-400 bg-zinc-800 px-1.5 py-0.5 rounded text-xs">ei_sk_</code> and is sent as a Bearer token in the <code className="text-emerald-400 bg-zinc-800 px-1.5 py-0.5 rounded text-xs">Authorization</code> header. API keys are tied to your developer account and inherit your plan&apos;s rate limits and quotas.
                 </p>
               </div>
             </div>
@@ -57,12 +57,12 @@ export function DocsAuthentication() {
               {copiedId === 'correct' ? <Check className="w-4 h-4 text-emerald-400" /> : <X className="w-4 h-4" />}
             </button>
             <pre className="text-sm text-zinc-300 font-mono whitespace-pre">{`# Include the API key in the Authorization header
-curl https://api.estateiq.com/v1/ai/generate \\
+curl https://api.nexusapi.com/v1/ai/generate \\
   -H "Authorization: Bearer ei_sk_live_a1b2c3d4e5f6g7h8i9j0" \\
   -H "Content-Type: application/json"
 
 # JavaScript example
-fetch('https://api.estateiq.com/v1/ai/generate', {
+fetch('https://api.nexusapi.com/v1/ai/generate', {
   headers: {
     'Authorization': 'Bearer ei_sk_live_a1b2c3d4e5f6g7h8i9j0',
     'Content-Type': 'application/json'
@@ -84,7 +84,7 @@ fetch('https://api.estateiq.com/v1/ai/generate', {
                 <X className="w-4 h-4" /> Don&apos;t use the API key as a query parameter
               </div>
               <code className="text-red-400/70 text-xs bg-zinc-950 px-2 py-1 rounded block">
-                &#10005; https://api.estateiq.com/v1/properties?api_key=ei_sk_...
+                &#10005; https://api.nexusapi.com/v1/properties?api_key=ei_sk_...
               </code>
             </div>
             <div className="rounded-lg bg-red-500/5 border border-red-500/20 p-4">

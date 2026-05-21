@@ -69,7 +69,7 @@ function DocsPage() {
       <div className="flex-1 max-w-4xl mx-auto px-4 py-20">
         <h1 className="text-4xl font-bold text-white mb-6">Documentation</h1>
         <p className="text-zinc-400 text-lg mb-12">
-          Everything you need to integrate EstateIQ into your application.
+          Everything you need to integrate NexusAPI into your application.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {[

@@ -29,7 +29,7 @@ export function DocsRateLimits() {
           <h1 className="text-3xl font-bold text-white">Rate Limits</h1>
         </div>
         <p className="text-zinc-400 text-lg mb-8">
-          EstateIQ enforces rate limits to ensure fair usage and platform stability. Limits are applied per API key using a sliding window algorithm.
+          NexusAPI enforces rate limits to ensure fair usage and platform stability. Limits are applied per API key using a sliding window algorithm.
         </p>
 
         {/* How rate limiting works */}

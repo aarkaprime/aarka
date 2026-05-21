@@ -29,7 +29,7 @@ export function DocsWebhooks() {
           <h1 className="text-3xl font-bold text-white">Webhooks</h1>
         </div>
         <p className="text-zinc-400 text-lg mb-8">
-          Receive real-time notifications when events occur in your EstateIQ account. Webhooks are HTTP POST requests sent to a URL you specify.
+          Receive real-time notifications when events occur in your NexusAPI account. Webhooks are HTTP POST requests sent to a URL you specify.
         </p>
 
         {/* Setup guide */}
@@ -54,7 +54,7 @@ export function DocsWebhooks() {
               <div className="w-7 h-7 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">3</div>
               <div>
                 <h3 className="text-white font-medium text-sm">Verify Signatures</h3>
-                <p className="text-zinc-400 text-xs mt-1">Always verify the <code className="text-emerald-400 text-xs bg-zinc-800 px-1 rounded">X-EstateIQ-Signature</code> header using HMAC-SHA256 to confirm the request is from EstateIQ.</p>
+                <p className="text-zinc-400 text-xs mt-1">Always verify the <code className="text-emerald-400 text-xs bg-zinc-800 px-1 rounded">X-NexusAPI-Signature</code> header using HMAC-SHA256 to confirm the request is from NexusAPI.</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
@@ -72,7 +72,7 @@ export function DocsWebhooks() {
           <h2 className="text-xl font-semibold text-white mb-4">Create a Webhook</h2>
           <div className="rounded-lg bg-zinc-950 border border-zinc-800 p-4 overflow-x-auto relative">
             <button
-              onClick={() => copyCode(`POST /v1/webhooks\n\n{\n  "url": "https://yourapp.com/api/webhooks/estateiq",\n  "events": ["lead.created", "lead.status_changed", "content.generated"]\n}`, 'create')}
+              onClick={() => copyCode(`POST /v1/webhooks\n\n{\n  "url": "https://yourapp.com/api/webhooks/nexusapi",\n  "events": ["lead.created", "lead.status_changed", "content.generated"]\n}`, 'create')}
               className="absolute top-3 right-3 text-zinc-500 hover:text-white cursor-pointer"
             >
               {copiedId === 'create' ? <Check className="w-4 h-4 text-emerald-400" /> : <span className="text-xs">Copy</span>}
@@ -80,7 +80,7 @@ export function DocsWebhooks() {
             <pre className="text-sm text-zinc-300 font-mono whitespace-pre">{`POST /v1/webhooks
 
 {
-  "url": "https://yourapp.com/api/webhooks/estateiq",
+  "url": "https://yourapp.com/api/webhooks/nexusapi",
   "events": ["lead.created", "lead.status_changed", "content.generated"]
 }
 
@@ -89,7 +89,7 @@ export function DocsWebhooks() {
   "success": true,
   "data": {
     "id": "whk_abc123",
-    "url": "https://yourapp.com/api/webhooks/estateiq",
+    "url": "https://yourapp.com/api/webhooks/nexusapi",
     "events": ["lead.created", "lead.status_changed", "content.generated"],
     "secret": "whsec_a1b2c3d4e5f6g7h8i9j0...",
     "status": "active",
@@ -173,9 +173,9 @@ export function DocsWebhooks() {
               <tbody>
                 {[
                   ['Content-Type', 'application/json'],
-                  ['X-EstateIQ-Event', 'The event type that triggered this webhook (e.g., lead.created)'],
-                  ['X-EstateIQ-Signature', 'HMAC-SHA256 signature of the payload body using your webhook secret'],
-                  ['X-EstateIQ-Delivery', 'Unique delivery ID for this webhook attempt'],
+                  ['X-NexusAPI-Event', 'The event type that triggered this webhook (e.g., lead.created)'],
+                  ['X-NexusAPI-Signature', 'HMAC-SHA256 signature of the payload body using your webhook secret'],
+                  ['X-NexusAPI-Delivery', 'Unique delivery ID for this webhook attempt'],
                 ].map(([header, desc]) => (
                   <tr key={header} className="border-b border-zinc-800/50">
                     <td className="py-2.5 text-emerald-400 font-mono text-xs">{header}</td>
@@ -191,11 +191,11 @@ export function DocsWebhooks() {
         <div className="mb-10">
           <h2 className="text-xl font-semibold text-white mb-4">Signature Verification</h2>
           <p className="text-zinc-400 text-sm mb-4">
-            Always verify the signature to ensure the webhook is genuinely from EstateIQ. The signature is computed as HMAC-SHA256 of the raw request body using your webhook secret.
+            Always verify the signature to ensure the webhook is genuinely from NexusAPI. The signature is computed as HMAC-SHA256 of the raw request body using your webhook secret.
           </p>
           <div className="rounded-lg bg-zinc-950 border border-zinc-800 p-4 overflow-x-auto relative">
             <button
-              onClick={() => copyCode(`import crypto from 'crypto';\n\nfunction verifySignature(payload, signature, secret) {\n  const expected = crypto\n    .createHmac('sha256', secret)\n    .update(payload)\n    .digest('hex');\n  return crypto.timingSafeEqual(\n    Buffer.from(signature),\n    Buffer.from(expected)\n  );\n}\n\n// Usage in Express:\napp.post('/webhooks/estateiq', (req, res) => {\n  const signature = req.headers['x-estateiq-signature'];\n  const payload = JSON.stringify(req.body);\n  \n  if (!verifySignature(payload, signature, WEBHOOK_SECRET)) {\n    return res.status(401).send('Invalid signature');\n  }\n  \n  // Process the event\n  console.log(req.body.event, req.body.data);\n  res.status(200).send('OK');\n});`, 'sig')}
+              onClick={() => copyCode(`import crypto from 'crypto';\n\nfunction verifySignature(payload, signature, secret) {\n  const expected = crypto\n    .createHmac('sha256', secret)\n    .update(payload)\n    .digest('hex');\n  return crypto.timingSafeEqual(\n    Buffer.from(signature),\n    Buffer.from(expected)\n  );\n}\n\n// Usage in Express:\napp.post('/webhooks/nexusapi', (req, res) => {\n  const signature = req.headers['x-nexusapi-signature'];\n  const payload = JSON.stringify(req.body);\n  \n  if (!verifySignature(payload, signature, WEBHOOK_SECRET)) {\n    return res.status(401).send('Invalid signature');\n  }\n  \n  // Process the event\n  console.log(req.body.event, req.body.data);\n  res.status(200).send('OK');\n});`, 'sig')}
               className="absolute top-3 right-3 text-zinc-500 hover:text-white cursor-pointer"
             >
               {copiedId === 'sig' ? <Check className="w-4 h-4 text-emerald-400" /> : <span className="text-xs">Copy</span>}
@@ -214,8 +214,8 @@ function verifySignature(payload, signature, secret) {
 }
 
 // Usage in Express:
-app.post('/webhooks/estateiq', (req, res) => {
-  const signature = req.headers['x-estateiq-signature'];
+app.post('/webhooks/nexusapi', (req, res) => {
+  const signature = req.headers['x-nexusapi-signature'];
   const payload = JSON.stringify(req.body);
   
   if (!verifySignature(payload, signature, WEBHOOK_SECRET)) {

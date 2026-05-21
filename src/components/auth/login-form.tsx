@@ -45,7 +45,7 @@ export function LoginForm() {
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-2 mb-4">
             <Zap className="w-8 h-8 text-emerald-500" />
-            <span className="text-2xl font-bold text-white">EstateIQ</span>
+            <span className="text-2xl font-bold text-white">NexusAPI</span>
           </div>
           <h1 className="text-xl font-semibold text-white">Welcome back</h1>
           <p className="text-zinc-500 text-sm mt-1">Sign in to your developer account</p>

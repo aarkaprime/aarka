@@ -18,7 +18,7 @@ export function DocsGettingStarted() {
   const jsCode = `// Install the HTTP client of your choice
 // npm install node-fetch (or use built-in fetch)
 
-const response = await fetch('https://api.estateiq.com/v1/ai/generate', {
+const response = await fetch('https://api.nexusapi.com/v1/ai/generate', {
   method: 'POST',
   headers: {
     'Authorization': 'Bearer ei_sk_your_api_key_here',
@@ -52,7 +52,7 @@ console.log(data.results);`
 import requests
 
 response = requests.post(
-    'https://api.estateiq.com/v1/ai/generate',
+    'https://api.nexusapi.com/v1/ai/generate',
     headers={
         'Authorization': 'Bearer ei_sk_your_api_key_here',
         'Content-Type': 'application/json'
@@ -80,7 +80,7 @@ response = requests.post(
 data = response.json()
 print(data['results'])`
 
-  const curlCode = `curl -X POST https://api.estateiq.com/v1/ai/generate \\
+  const curlCode = `curl -X POST https://api.nexusapi.com/v1/ai/generate \\
   -H "Authorization: Bearer ei_sk_your_api_key_here" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -130,7 +130,7 @@ print(data['results'])`
             <h2 className="text-xl font-semibold text-white">Create Your Account</h2>
           </div>
           <p className="text-zinc-400 mb-4 ml-11">
-            Sign up for a free account at EstateIQ. No credit card required. You&apos;ll start on the Free plan with 100 API calls per month.
+            Sign up for a free account at NexusAPI. No credit card required. You&apos;ll start on the Free plan with 100 API calls per month.
           </p>
           <div className="ml-11 rounded-lg bg-zinc-900/50 border border-zinc-800 p-4">
             <div className="flex items-center gap-2 mb-2">
@@ -259,7 +259,7 @@ print(data['results'])`
           <div className="grid gap-4">
             <div className="rounded-lg bg-zinc-900/50 border border-zinc-800 p-4">
               <h3 className="text-white font-medium text-sm mb-2">Base URL</h3>
-              <code className="text-emerald-400 text-sm bg-zinc-950 px-3 py-1.5 rounded block">https://api.estateiq.com/v1</code>
+              <code className="text-emerald-400 text-sm bg-zinc-950 px-3 py-1.5 rounded block">https://api.nexusapi.com/v1</code>
             </div>
             <div className="rounded-lg bg-zinc-900/50 border border-zinc-800 p-4">
               <h3 className="text-white font-medium text-sm mb-2">Authentication Header</h3>

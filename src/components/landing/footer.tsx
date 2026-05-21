@@ -12,7 +12,7 @@ export function Footer() {
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2">
             <Zap className="w-5 h-5 text-emerald-500" />
-            <span className="font-bold text-white">EstateIQ</span>
+            <span className="font-bold text-white">NexusAPI</span>
           </div>
           <div className="flex items-center gap-6 text-sm text-zinc-500">
             <button onClick={() => setView('landing')} className="hover:text-white transition-colors cursor-pointer">API</button>
@@ -21,7 +21,7 @@ export function Footer() {
             <button onClick={() => setView('register')} className="hover:text-white transition-colors cursor-pointer">Sign Up</button>
           </div>
           <div className="text-sm text-zinc-600">
-            &copy; {new Date().getFullYear()} EstateIQ. All rights reserved.
+            &copy; {new Date().getFullYear()} NexusAPI. All rights reserved.
           </div>
         </div>
       </div>

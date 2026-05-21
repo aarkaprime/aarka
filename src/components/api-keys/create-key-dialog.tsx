@@ -91,7 +91,7 @@ export function CreateKeyDialog({ open, onClose, onCreated }: CreateKeyDialogPro
             <DialogHeader>
               <DialogTitle className="text-white">Create New API Key</DialogTitle>
               <DialogDescription className="text-zinc-400">
-                Generate a new API key for accessing the EstateIQ API.
+                Generate a new API key for accessing the NexusAPI API.
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 mt-4">

@@ -46,7 +46,7 @@ export function DocsAIGeneration() {
     "tone": "luxury",
     "count": 3,
     "save": true,
-    "webhook_url": "https://yourapp.com/webhooks/estateiq"
+    "webhook_url": "https://yourapp.com/webhooks/nexusapi"
   }
 }`
 

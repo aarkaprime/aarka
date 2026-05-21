@@ -8,7 +8,7 @@ const rateLimitStore = new Map<string, { timestamps: number[] }>()
 
 export function generateApiKey(): { fullKey: string; keyPrefix: string; keyHash: string } {
   const randomPart = randomBytes(32).toString('hex')
-  const fullKey = `ei_sk_${randomPart}`
+  const fullKey = `nxai_${randomPart}`
   const keyPrefix = fullKey.substring(0, 12)
   const keyHash = createHash('sha256').update(fullKey).digest('hex')
   return { fullKey, keyPrefix, keyHash }

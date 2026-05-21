@@ -28,7 +28,7 @@ export function DocsErrors() {
       title: 'Authorization Errors (403)',
       color: 'text-amber-400 bg-amber-500/10',
       errors: [
-        { code: 'ACCOUNT_SUSPENDED', status: 403, message: 'Your account has been suspended. Contact support.', solution: 'Contact support@estateiq.com to resolve account issues.' },
+        { code: 'ACCOUNT_SUSPENDED', status: 403, message: 'Your account has been suspended. Contact support.', solution: 'Contact support@nexusapi.com to resolve account issues.' },
         { code: 'AI_MODEL_NOT_AVAILABLE', status: 403, message: 'The requested AI model is not available on your plan.', solution: 'Upgrade your plan to access advanced AI models and features.' },
       ]
     },
@@ -67,7 +67,7 @@ export function DocsErrors() {
       title: 'Server Errors (5xx)',
       color: 'text-red-400 bg-red-500/10',
       errors: [
-        { code: 'AI_SERVICE_UNAVAILABLE', status: 503, message: 'The AI service is temporarily unavailable. Please retry.', solution: 'Retry after a short delay. If persistent, check status.estateiq.com.' },
+        { code: 'AI_SERVICE_UNAVAILABLE', status: 503, message: 'The AI service is temporarily unavailable. Please retry.', solution: 'Retry after a short delay. If persistent, check status.nexusapi.com.' },
         { code: 'AI_GENERATION_FAILED', status: 500, message: 'AI content generation failed. Please try again.', solution: 'Retry the request. If it persists, simplify the property data or try a different tone.' },
       ]
     },
@@ -88,7 +88,7 @@ export function DocsErrors() {
           <h1 className="text-3xl font-bold text-white">Error Codes</h1>
         </div>
         <p className="text-zinc-400 text-lg mb-8">
-          EstateIQ uses standard HTTP status codes and consistent error response format. This reference covers every error code and how to resolve them.
+          NexusAPI uses standard HTTP status codes and consistent error response format. This reference covers every error code and how to resolve them.
         </p>
 
         {/* Error response format */}
@@ -199,7 +199,7 @@ export function DocsErrors() {
               <h3 className="text-white font-medium text-sm mb-2">Handling Errors in Code</h3>
               <div className="rounded-lg bg-zinc-950 border border-zinc-800 p-3 overflow-x-auto">
                 <pre className="text-sm text-zinc-300 font-mono whitespace-pre">{`try {
-  const response = await fetch('https://api.estateiq.com/v1/ai/generate', {
+  const response = await fetch('https://api.nexusapi.com/v1/ai/generate', {
     method: 'POST',
     headers: {
       'Authorization': \`Bearer \${API_KEY}\`,
@@ -217,7 +217,7 @@ export function DocsErrors() {
         console.log(\`Rate limited. Retry after \${data.error.retry_after}s\`);
         break;
       case 'MONTHLY_QUOTA_EXCEEDED':
-        console.log('Upgrade your plan at estateiq.com/pricing');
+        console.log('Upgrade your plan at nexusapi.com/pricing');
         break;
       case 'INVALID_API_KEY':
         console.log('Check your API key configuration');

@@ -18,7 +18,7 @@ export function UseCases() {
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">Build Anything. Anywhere.</h2>
-          <p className="text-zinc-400 text-lg">Developers are using EstateIQ to power these apps and more.</p>
+          <p className="text-zinc-400 text-lg">Developers are using NexusAPI to power these apps and more.</p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {useCases.map((uc, i) => (
