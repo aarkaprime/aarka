@@ -13,10 +13,10 @@ export function DocsChangelog() {
       title: 'NexusAPI API v1.0 — Global Launch',
       type: 'major' as const,
       changes: [
-        { type: 'feature' as const, desc: 'AI content generation engine with 6 content types: property descriptions, social posts, WhatsApp messages, email campaigns, ad copy, and custom content' },
-        { type: 'feature' as const, desc: 'Full property CRUD API with search, filtering, and pagination' },
-        { type: 'feature' as const, desc: 'Lead management API with lifecycle tracking and batch creation' },
-        { type: 'feature' as const, desc: 'Analytics API with overview, usage, content performance, and lead funnel endpoints' },
+        { type: 'feature' as const, desc: 'AI chat completion API with OpenAI-compatible interface' },
+        { type: 'feature' as const, desc: '8 AI models from Chinese providers: DeepSeek, Qwen, GLM-4, Moonshot, Yi, Baichuan' },
+        { type: 'feature' as const, desc: 'Model catalog endpoint with pricing and capability information' },
+        { type: 'feature' as const, desc: 'Analytics API with overview, usage, and token performance endpoints' },
         { type: 'feature' as const, desc: 'Webhook system with HMAC-SHA256 signature verification and retry logic' },
         { type: 'feature' as const, desc: 'API key management with test and production environments' },
         { type: 'feature' as const, desc: 'Rate limiting with sliding window algorithm and monthly quotas' },
@@ -50,17 +50,17 @@ export function DocsChangelog() {
         { type: 'feature' as const, desc: 'Expanded language support from 5 to 10 global languages' },
         { type: 'feature' as const, desc: 'Expanded currency support from 10 to 20 major world currencies' },
         { type: 'feature' as const, desc: 'Expanded country support from 10 to 25 global countries' },
-        { type: 'improvement' as const, desc: 'Updated AI system prompts for global scope — supports all major real estate markets worldwide' },
-        { type: 'improvement' as const, desc: 'AI prompts now adapt measurement systems (metric/imperial), local landmarks, and local currency based on property context' },
+        { type: 'improvement' as const, desc: 'Updated AI routing with automatic fallback from DeepSeek to z-ai-web-dev-sdk' },
+        { type: 'improvement' as const, desc: 'Added chat playground for interactive model testing in the dashboard' },
       ]
     },
   ]
 
   const upcomingFeatures = [
     'Official SDKs for JavaScript, Python, PHP, and Ruby',
-    'Streaming responses for AI generation endpoints',
-    'Image generation for property listings',
-    'Bulk property import via CSV upload',
+    'Streaming responses (SSE) for chat completions',
+    'Image generation capabilities',
+    'Function calling and tool use support',
     'Advanced analytics with custom date ranges',
     'Team management with role-based access control',
     'Sandbox environment for testing',

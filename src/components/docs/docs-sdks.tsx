@@ -18,177 +18,105 @@ export function DocsSDKs() {
   const jsCode = `import { NexusAPI } from '@nexusapi/sdk';
 
 const client = new NexusAPI({
-  apiKey: process.env.ESTATEIQ_API_KEY,
+  apiKey: process.env.NEXUSAPI_API_KEY,
   baseURL: 'https://api.nexusapi.com/v1'
 });
 
-// Generate property descriptions
-const result = await client.ai.generate({
-  content_type: 'property_description',
-  property: {
-    title: 'Modern Downtown Loft',
-    property_type: 'apartment',
-    location: 'SoHo, New York',
-    price: 1250000,
-    currency: 'USD',
-    bedrooms: 2,
-    bathrooms: 2,
-    features: ['Exposed brick', 'High ceilings']
-  },
-  options: {
-    language: 'english',
-    tone: 'luxury',
-    count: 3
-  }
+// Chat completion
+const result = await client.chat.completions.create({
+  model: 'deepseek-chat',
+  messages: [
+    { role: 'system', content: 'You are a helpful assistant.' },
+    { role: 'user', content: 'Explain quantum computing simply.' }
+  ],
+  temperature: 0.7,
+  max_tokens: 500
 });
 
-console.log(result.results);
+console.log(result.choices[0].message.content);
 
-// List properties
-const properties = await client.properties.list({
-  status: 'active',
-  city: 'New York',
-  limit: 10
-});
+// List available models
+const models = await client.models.list();
 
-// Create a lead
-const lead = await client.leads.create({
-  name: 'Jane Smith',
-  email: 'jane@example.com',
-  source: 'website',
-  property_id: 'prop_abc123'
-});
+// Get account info
+const account = await client.account.get();
 
-// Get analytics overview
+// Get usage analytics
 const analytics = await client.analytics.overview();`
 
   const pythonCode = `from nexusapi import NexusAPI
 
-client = NexusAPI(api_key="ei_sk_your_api_key_here")
+client = NexusAPI(api_key="nxai_your_api_key_here")
 
-# Generate property descriptions
-result = client.ai.generate(
-    content_type="property_description",
-    property={
-        "title": "Modern Downtown Loft",
-        "property_type": "apartment",
-        "location": "SoHo, New York",
-        "price": 1250000,
-        "currency": "USD",
-        "bedrooms": 2,
-        "bathrooms": 2,
-        "features": ["Exposed brick", "High ceilings"]
-    },
-    options={
-        "language": "english",
-        "tone": "luxury",
-        "count": 3
-    }
+# Chat completion
+result = client.chat.completions.create(
+    model="deepseek-chat",
+    messages=[
+        {"role": "system", "content": "You are a helpful assistant."},
+        {"role": "user", "content": "Explain quantum computing simply."}
+    ],
+    temperature=0.7,
+    max_tokens=500
 )
 
-print(result.results)
+print(result.choices[0].message.content)
 
-# List properties
-properties = client.properties.list(
-    status="active",
-    city="New York",
-    limit=10
-)
+# List available models
+models = client.models.list()
 
-# Create a lead
-lead = client.leads.create(
-    name="Jane Smith",
-    email="jane@example.com",
-    source="website",
-    property_id="prop_abc123"
-)
+# Get account info
+account = client.account.get()
 
-# Get analytics
+# Get usage analytics
 analytics = client.analytics.overview()`
 
   const phpCode = `<?php
 
 use NexusAPI\\Client;
 
-$client = new Client('ei_sk_your_api_key_here');
+$client = new Client('nxai_your_api_key_here');
 
-// Generate property descriptions
-$result = $client->ai()->generate([
-    'content_type' => 'property_description',
-    'property' => [
-        'title' => 'Modern Downtown Loft',
-        'property_type' => 'apartment',
-        'location' => 'SoHo, New York',
-        'price' => 1250000,
-        'currency' => 'USD',
-        'bedrooms' => 2,
-        'bathrooms' => 2,
-        'features' => ['Exposed brick', 'High ceilings']
+// Chat completion
+$result = $client->chat()->completions([
+    'model' => 'deepseek-chat',
+    'messages' => [
+        ['role' => 'system', 'content' => 'You are a helpful assistant.'],
+        ['role' => 'user', 'content' => 'Explain quantum computing simply.']
     ],
-    'options' => [
-        'language' => 'english',
-        'tone' => 'luxury',
-        'count' => 3
-    ]
+    'temperature' => 0.7,
+    'max_tokens' => 500
 ]);
 
-print_r($result->results);
+print_r($result->choices[0]->message->content);
 
-// List properties
-$properties = $client->properties()->list([
-    'status' => 'active',
-    'city' => 'New York',
-    'limit' => 10
-]);
+// List available models
+$models = $client->models()->list();
 
-// Create a lead
-$lead = $client->leads()->create([
-    'name' => 'Jane Smith',
-    'email' => 'jane@example.com',
-    'source' => 'website',
-    'property_id' => 'prop_abc123'
-]);`
+// Get account info
+$account = $client->account()->get();`
 
   const rubyCode = `require 'nexusapi'
 
-client = NexusAPI::Client.new(api_key: 'ei_sk_your_api_key_here')
+client = NexusAPI::Client.new(api_key: 'nxai_your_api_key_here')
 
-# Generate property descriptions
-result = client.ai.generate(
-  content_type: 'property_description',
-  property: {
-    title: 'Modern Downtown Loft',
-    property_type: 'apartment',
-    location: 'SoHo, New York',
-    price: 1_250_000,
-    currency: 'USD',
-    bedrooms: 2,
-    bathrooms: 2,
-    features: ['Exposed brick', 'High ceilings']
-  },
-  options: {
-    language: 'english',
-    tone: 'luxury',
-    count: 3
-  }
+# Chat completion
+result = client.chat.completions.create(
+  model: 'deepseek-chat',
+  messages: [
+    { role: 'system', content: 'You are a helpful assistant.' },
+    { role: 'user', content: 'Explain quantum computing simply.' }
+  ],
+  temperature: 0.7,
+  max_tokens: 500
 )
 
-puts result.results
+puts result.choices[0].message.content
 
-# List properties
-properties = client.properties.list(
-  status: 'active',
-  city: 'New York',
-  limit: 10
-)
+# List available models
+models = client.models.list
 
-# Create a lead
-lead = client.leads.create(
-  name: 'Jane Smith',
-  email: 'jane@example.com',
-  source: 'website',
-  property_id: 'prop_abc123'
-)`
+# Get account info
+account = client.account.get`
 
   const tabContent: Record<string, string> = {
     js: jsCode,
@@ -241,7 +169,7 @@ lead = client.leads.create(
         {/* Language tabs */}
         <div className="mb-10">
           <h2 className="text-xl font-semibold text-white mb-4">Usage Examples</h2>
-          
+
           <div className="flex gap-1 mb-0">
             {tabs.map((tab) => (
               <button
@@ -258,13 +186,11 @@ lead = client.leads.create(
             ))}
           </div>
 
-          {/* Install command */}
           <div className="mb-0.5 bg-zinc-900/50 border border-zinc-800 border-b-0 px-4 py-2 rounded-t-none">
             <span className="text-zinc-500 text-xs">Install: </span>
             <code className="text-emerald-400 text-xs">{tabs.find(t => t.id === activeTab)?.install}</code>
           </div>
 
-          {/* Code block */}
           <div className="rounded-b-lg rounded-tr-lg bg-zinc-950 border border-zinc-800 p-4 overflow-x-auto relative">
             <button
               onClick={() => copyCode(tabContent[activeTab], `sdk-${activeTab}`)}
@@ -306,16 +232,20 @@ lead = client.leads.create(
             <div className="rounded-lg bg-zinc-900/50 border border-zinc-800 p-5">
               <h3 className="text-white font-medium text-sm mb-2">JavaScript (fetch)</h3>
               <div className="rounded-lg bg-zinc-950 border border-zinc-800 p-3 overflow-x-auto">
-                <pre className="text-sm text-zinc-300 font-mono whitespace-pre">{`const response = await fetch('https://api.nexusapi.com/v1/ai/generate', {
+                <pre className="text-sm text-zinc-300 font-mono whitespace-pre">{`const response = await fetch('https://api.nexusapi.com/v1/chat/completions', {
   method: 'POST',
   headers: {
-    'Authorization': \`Bearer \${process.env.ESTATEIQ_API_KEY}\`,
+    'Authorization': \`Bearer \${process.env.NEXUSAPI_API_KEY}\`,
     'Content-Type': 'application/json'
   },
   body: JSON.stringify({
-    content_type: 'property_description',
-    property: { title: 'My Property', property_type: 'apartment', location: 'New York', price: 500000 },
-    options: { count: 3 }
+    model: 'deepseek-chat',
+    messages: [
+      { role: 'system', content: 'You are a helpful assistant.' },
+      { role: 'user', content: 'Hello!' }
+    ],
+    temperature: 0.7,
+    max_tokens: 500
   })
 });
 const data = await response.json();`}</pre>
@@ -327,15 +257,19 @@ const data = await response.json();`}</pre>
                 <pre className="text-sm text-zinc-300 font-mono whitespace-pre">{`import requests
 
 response = requests.post(
-    'https://api.nexusapi.com/v1/ai/generate',
+    'https://api.nexusapi.com/v1/chat/completions',
     headers={
-        'Authorization': f'Bearer {os.environ["ESTATEIQ_API_KEY"]}',
+        'Authorization': f'Bearer {os.environ["NEXUSAPI_API_KEY"]}',
         'Content-Type': 'application/json'
     },
     json={
-        'content_type': 'property_description',
-        'property': {'title': 'My Property', 'property_type': 'apartment', 'location': 'New York', 'price': 500000},
-        'options': {'count': 3}
+        'model': 'deepseek-chat',
+        'messages': [
+            {'role': 'system', 'content': 'You are a helpful assistant.'},
+            {'role': 'user', 'content': 'Hello!'}
+        ],
+        'temperature': 0.7,
+        'max_tokens': 500
     }
 )
 data = response.json()`}</pre>

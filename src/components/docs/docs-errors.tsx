@@ -19,7 +19,7 @@ export function DocsErrors() {
       title: 'Authentication Errors (401)',
       color: 'text-red-400 bg-red-500/10',
       errors: [
-        { code: 'MISSING_API_KEY', status: 401, message: 'API key is required. Include it in the Authorization header as "Bearer ei_sk_..."', solution: 'Add the Authorization header with a valid API key.' },
+        { code: 'MISSING_API_KEY', status: 401, message: 'API key is required. Include it in the Authorization header as "Bearer nxai_..."', solution: 'Add the Authorization header with a valid API key.' },
         { code: 'INVALID_API_KEY', status: 401, message: 'The API key provided is invalid.', solution: 'Verify your API key. Check for typos or whitespace. Regenerate the key if needed.' },
         { code: 'API_KEY_REVOKED', status: 401, message: 'This API key has been revoked.', solution: 'Create a new API key from the dashboard. The old key cannot be reactivated.' },
       ]
@@ -38,9 +38,9 @@ export function DocsErrors() {
       errors: [
         { code: 'INVALID_REQUEST_BODY', status: 400, message: 'The request body is invalid or malformed.', solution: 'Ensure your JSON is valid and matches the expected schema.' },
         { code: 'MISSING_REQUIRED_FIELD', status: 400, message: 'Required field is missing.', solution: 'Check the API documentation for required fields in your request.' },
-        { code: 'INVALID_CONTENT_TYPE', status: 400, message: 'Invalid content_type.', solution: 'Use one of: property_description, social_post, whatsapp_msg, email_campaign, ad_copy, custom' },
-        { code: 'INVALID_PROPERTY_TYPE', status: 400, message: 'Invalid property_type.', solution: 'Use one of: apartment, house, land, commercial, townhouse, villa, studio, duplex' },
-        { code: 'GENERATION_LIMIT_EXCEEDED', status: 400, message: 'Count exceeds maximum of 10 per request.', solution: 'Reduce the count parameter to 10 or fewer.' },
+        { code: 'INVALID_MODEL', status: 400, message: 'The specified model is not available.', solution: 'Check available models with GET /v1/models.' },
+        { code: 'INVALID_MESSAGES_FORMAT', status: 400, message: 'Messages array must contain at least one message with valid role.', solution: 'Provide messages array with role (system/user/assistant) and content.' },
+        { code: 'CONTEXT_LENGTH_EXCEEDED', status: 400, message: 'Message length exceeds model context window.', solution: 'Reduce message count or switch to a model with larger context window.' },
         { code: 'INVALID_WEBHOOK_URL', status: 400, message: 'The webhook URL is invalid.', solution: 'Provide a valid HTTPS URL that can accept POST requests.' },
         { code: 'WEBHOOK_LIMIT_EXCEEDED', status: 400, message: 'Maximum number of webhooks for your plan reached.', solution: 'Delete unused webhooks or upgrade your plan.' },
       ]
@@ -57,9 +57,6 @@ export function DocsErrors() {
       title: 'Not Found Errors (404)',
       color: 'text-zinc-400 bg-zinc-500/10',
       errors: [
-        { code: 'PROPERTY_NOT_FOUND', status: 404, message: 'Property not found.', solution: 'Verify the property ID. Check if the property was deleted.' },
-        { code: 'LEAD_NOT_FOUND', status: 404, message: 'Lead not found.', solution: 'Verify the lead ID. Check if the lead was deleted.' },
-        { code: 'CONTENT_NOT_FOUND', status: 404, message: 'Content not found.', solution: 'Verify the content ID. Check if the content was deleted.' },
         { code: 'WEBHOOK_NOT_FOUND', status: 404, message: 'Webhook not found.', solution: 'Verify the webhook ID. Check if the webhook was deleted.' },
       ]
     },
@@ -68,7 +65,7 @@ export function DocsErrors() {
       color: 'text-red-400 bg-red-500/10',
       errors: [
         { code: 'AI_SERVICE_UNAVAILABLE', status: 503, message: 'The AI service is temporarily unavailable. Please retry.', solution: 'Retry after a short delay. If persistent, check status.nexusapi.com.' },
-        { code: 'AI_GENERATION_FAILED', status: 500, message: 'AI content generation failed. Please try again.', solution: 'Retry the request. If it persists, simplify the property data or try a different tone.' },
+        { code: 'AI_GENERATION_FAILED', status: 500, message: 'AI chat completion failed. Please try again.', solution: 'Retry the request. Try a different model if the issue persists.' },
       ]
     },
   ]
@@ -187,8 +184,8 @@ export function DocsErrors() {
     "status": 400,
     "details": {
       "fields": {
-        "property.price": "Must be a positive number",
-        "property.title": "Required field is missing"
+        "messages[0].content": "Required field is missing",
+        "model": "Invalid model ID"
       }
     }
   }

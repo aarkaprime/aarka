@@ -31,14 +31,14 @@ interface WebhookItem {
 }
 
 const EVENT_OPTIONS = [
-  'property.created',
-  'property.updated',
-  'property.deleted',
-  'lead.created',
-  'lead.updated',
-  'lead.deleted',
-  'content.generated',
-  'content.failed',
+  'chat.completion',
+  'chat.failed',
+  'api_key.created',
+  'api_key.revoked',
+  'account.upgraded',
+  'usage.alert',
+  'model.available',
+  'model.degraded',
 ]
 
 export function WebhookManager() {
@@ -48,7 +48,7 @@ export function WebhookManager() {
   const [createLoading, setCreateLoading] = useState(false)
   const [testLoadingId, setTestLoadingId] = useState<string | null>(null)
   const [newUrl, setNewUrl] = useState('')
-  const [newEvents, setNewEvents] = useState<string[]>(['property.created'])
+  const [newEvents, setNewEvents] = useState<string[]>(['chat.completion'])
   const addToast = useAppStore((s) => s.addToast)
 
   const fetchWebhooks = async () => {
@@ -98,7 +98,7 @@ export function WebhookManager() {
         addToast('Webhook created successfully!', 'success')
         setDialogOpen(false)
         setNewUrl('')
-        setNewEvents(['property.created'])
+        setNewEvents(['chat.completion'])
         fetchWebhooks()
       } else {
         addToast(result.error?.message || 'Failed to create webhook.', 'error')

@@ -6,70 +6,55 @@ export const GET = withApiAuth(async (request, context) => {
   const developerId = context.developer.id as string
   const creditsRemaining = (context.developer.monthlyCallsLimit as number) - (context.developer.monthlyCallsUsed as number)
 
-  const [leadsByStatus, leadsBySource, leadsWithProperty] = await Promise.all([
-    db.lead.groupBy({
-      by: ['status'],
-      where: { developerId },
-      _count: { status: true },
+  const now = new Date()
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
+  const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+
+  const [dailyCalls, callsByEndpoint, callsByStatus] = await Promise.all([
+    db.usageLog.groupBy({
+      by: ['createdAt'],
+      where: { developerId, createdAt: { gte: sevenDaysAgo } },
+      _count: { createdAt: true },
     }),
-    db.lead.groupBy({
-      by: ['source'],
-      where: { developerId },
-      _count: { source: true },
+    db.usageLog.groupBy({
+      by: ['endpoint'],
+      where: { developerId, createdAt: { gte: startOfMonth } },
+      _count: { endpoint: true },
+      _avg: { responseTimeMs: true },
+      orderBy: { _count: { endpoint: 'desc' } },
+      take: 10,
     }),
-    db.lead.findMany({
-      where: { developerId, propertyId: { not: null } },
-      select: { propertyId: true, status: true },
+    db.usageLog.groupBy({
+      by: ['statusCode'],
+      where: { developerId, createdAt: { gte: startOfMonth } },
+      _count: { statusCode: true },
     }),
   ])
 
-  // Leads by status
-  const byStatus: Record<string, number> = {}
-  for (const item of leadsByStatus) {
-    byStatus[item.status] = item._count.status
+  // Group daily calls by date
+  const callsByDay: Record<string, number> = {}
+  for (const item of dailyCalls) {
+    const dateKey = new Date(item.createdAt).toISOString().split('T')[0]
+    callsByDay[dateKey] = (callsByDay[dateKey] || 0) + item._count.createdAt
   }
 
-  // Leads by source
-  const bySource: Record<string, number> = {}
-  for (const item of leadsBySource) {
-    bySource[item.source] = item._count.source
+  // Calls by endpoint with avg response time
+  const endpointStats = callsByEndpoint.map(item => ({
+    endpoint: item.endpoint,
+    count: item._count.endpoint,
+    avg_response_time_ms: item._avg.responseTimeMs ? Math.round(item._avg.responseTimeMs) : 0,
+  }))
+
+  // Status code distribution
+  const statusDistribution: Record<string, number> = {}
+  for (const item of callsByStatus) {
+    const statusGroup = `${Math.floor(item.statusCode / 100)}xx`
+    statusDistribution[statusGroup] = (statusDistribution[statusGroup] || 0) + item._count.statusCode
   }
-
-  // Leads by property type
-  const propertyIds = [...new Set(leadsWithProperty.map(l => l.propertyId).filter(Boolean))] as string[]
-  const properties = await db.property.findMany({
-    where: { id: { in: propertyIds } },
-    select: { id: true, propertyType: true },
-  })
-
-  const propertyTypeMap = new Map(properties.map(p => [p.id, p.propertyType]))
-  const byPropertyType: Record<string, number> = {}
-  for (const lead of leadsWithProperty) {
-    if (lead.propertyId) {
-      const propType = propertyTypeMap.get(lead.propertyId) || 'unknown'
-      byPropertyType[propType] = (byPropertyType[propType] || 0) + 1
-    }
-  }
-
-  // Conversion rates
-  const totalLeads = Object.values(byStatus).reduce((sum, count) => sum + count, 0)
-  const closedLeads = byStatus['closed'] || 0
-  const qualifiedLeads = byStatus['qualified'] || 0
-  const contactedLeads = byStatus['contacted'] || 0
-
-  const conversionRate = totalLeads > 0 ? (closedLeads / totalLeads) * 100 : 0
-  const qualificationRate = totalLeads > 0 ? (qualifiedLeads / totalLeads) * 100 : 0
-  const contactRate = totalLeads > 0 ? (contactedLeads / totalLeads) * 100 : 0
 
   return apiSuccess({
-    by_status: byStatus,
-    by_source: bySource,
-    by_property_type: byPropertyType,
-    conversion_rates: {
-      overall: Math.round(conversionRate * 100) / 100,
-      qualification: Math.round(qualificationRate * 100) / 100,
-      contact: Math.round(contactRate * 100) / 100,
-    },
-    total_leads: totalLeads,
+    calls_by_day: callsByDay,
+    endpoint_stats: endpointStats,
+    status_distribution: statusDistribution,
   }, { creditsRemaining })
 })

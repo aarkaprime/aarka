@@ -41,12 +41,11 @@ export async function getDeveloperUsageStats(developerId: string) {
   const thirtyDaysAgo = new Date()
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
 
-  const [totalCalls, recentCalls, totalProperties, totalLeads, totalContent] = await Promise.all([
+  const [totalCalls, recentCalls, totalApiKeys, totalWebhooks] = await Promise.all([
     db.usageLog.count({ where: { developerId } }),
     db.usageLog.count({ where: { developerId, createdAt: { gte: thirtyDaysAgo } } }),
-    db.property.count({ where: { developerId } }),
-    db.lead.count({ where: { developerId } }),
-    db.generatedContent.count({ where: { developerId } }),
+    db.apiKey.count({ where: { developerId, status: { not: 'revoked' } } }),
+    db.webhook.count({ where: { developerId } }),
   ])
 
   return {
@@ -54,8 +53,7 @@ export async function getDeveloperUsageStats(developerId: string) {
     monthlyCallsLimit: developer.monthlyCallsLimit,
     totalCallsAllTime: developer.totalCallsAllTime,
     recentCalls,
-    totalProperties,
-    totalLeads,
-    totalContent,
+    totalApiKeys,
+    totalWebhooks,
   }
 }

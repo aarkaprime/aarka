@@ -14,74 +14,25 @@ interface Endpoint {
 
 const ENDPOINTS: Endpoint[] = [
   {
-    label: 'Get Properties',
+    label: 'Chat Completion',
+    method: 'POST',
+    path: '/api/v1/chat/completions',
+    body: {
+      model: 'deepseek-chat',
+      messages: [
+        { role: 'system', content: 'You are a helpful assistant.' },
+        { role: 'user', content: 'Explain quantum computing in simple terms.' },
+      ],
+      temperature: 0.7,
+      max_tokens: 500,
+    },
+    description: 'Send a chat completion request',
+  },
+  {
+    label: 'List Models',
     method: 'GET',
-    path: '/api/v1/properties',
-    description: 'List all properties with pagination',
-  },
-  {
-    label: 'Create Property',
-    method: 'POST',
-    path: '/api/v1/properties',
-    body: {
-      title: 'Luxury Penthouse',
-      description: 'Stunning penthouse with panoramic city views',
-      property_type: 'apartment',
-      status: 'available',
-      price: 850000,
-      currency: 'USD',
-      bedrooms: 3,
-      bathrooms: 2,
-      area_sqft: 2200,
-      address: '432 Park Avenue',
-      city: 'New York',
-      country: 'US',
-      neighborhood: 'Midtown',
-    },
-    description: 'Create a new property listing',
-  },
-  {
-    label: 'Generate Content',
-    method: 'POST',
-    path: '/api/v1/ai/generate',
-    body: {
-      content_type: 'property_description',
-      property: {
-        title: 'Modern Downtown Loft',
-        property_type: 'apartment',
-        price: 450000,
-        currency: 'USD',
-        bedrooms: 2,
-        bathrooms: 1,
-        city: 'San Francisco',
-        neighborhood: 'SoMa',
-      },
-      options: {
-        language: 'english',
-        tone: 'professional',
-        save: true,
-      },
-    },
-    description: 'Generate AI content for a property',
-  },
-  {
-    label: 'Get Leads',
-    method: 'GET',
-    path: '/api/v1/leads',
-    description: 'List all leads with pagination',
-  },
-  {
-    label: 'Create Lead',
-    method: 'POST',
-    path: '/api/v1/leads',
-    body: {
-      name: 'John Smith',
-      email: 'john@example.com',
-      phone: '+1234567890',
-      source: 'website',
-      message: 'Interested in viewing the property',
-    },
-    description: 'Create a new lead',
+    path: '/api/v1/models',
+    description: 'List all available AI models',
   },
   {
     label: 'Get Analytics Overview',
@@ -94,6 +45,12 @@ const ENDPOINTS: Endpoint[] = [
     method: 'GET',
     path: '/api/v1/analytics/usage',
     description: 'Get API usage analytics',
+  },
+  {
+    label: 'Get Token Performance',
+    method: 'GET',
+    path: '/api/v1/analytics/content-performance',
+    description: 'Get token usage and performance stats',
   },
   {
     label: 'List API Keys',
@@ -120,10 +77,13 @@ const ENDPOINTS: Endpoint[] = [
     description: 'Check API health status (no auth required)',
   },
   {
-    label: 'Get Content',
-    method: 'GET',
-    path: '/api/v1/content',
-    description: 'List all generated content',
+    label: 'Validate API Key',
+    method: 'POST',
+    path: '/api/v1/validate/api-key',
+    body: {
+      api_key: 'nxai_your_api_key_here',
+    },
+    description: 'Validate an API key',
   },
 ]
 
@@ -325,7 +285,6 @@ export function ApiPlayground() {
 
         {/* Right Panel — Response */}
         <div className="space-y-4">
-          {/* Response Status Bar */}
           <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-4">
             <div className="flex items-center justify-between mb-2">
               <label className="text-xs font-medium text-zinc-400 uppercase tracking-wider">Response</label>

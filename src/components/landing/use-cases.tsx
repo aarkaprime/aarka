@@ -1,15 +1,15 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { MessageCircle, Globe, LayoutDashboard, Smartphone, BarChart3, Send } from 'lucide-react'
+import { MessageCircle, Globe, LayoutDashboard, Smartphone, BarChart3, Bot } from 'lucide-react'
 
 const useCases = [
-  { icon: MessageCircle, title: 'WhatsApp Property Bot', desc: 'Automate property inquiries and send AI-generated listings on WhatsApp.' },
-  { icon: Globe, title: 'Property Listing Website', desc: 'Power your listings with AI-generated descriptions in any language.' },
-  { icon: LayoutDashboard, title: 'Agency Dashboard', desc: 'Manage multiple clients and properties through one unified API.' },
-  { icon: Smartphone, title: 'Mobile Property App', desc: 'AI-powered search, recommendations, and instant content generation.' },
-  { icon: BarChart3, title: 'Market Analysis Tool', desc: 'Aggregate and analyze property data across markets and regions.' },
-  { icon: Send, title: 'SMS Marketing', desc: 'Send AI-generated property alerts and campaigns via SMS at scale.' },
+  { icon: Bot, title: 'AI Chatbot SaaS', desc: 'Build your own chatbot platform using the cheapest AI models via one API.' },
+  { icon: Globe, title: 'AI-Powered Website', desc: 'Add intelligent search, summarization, and content generation to any website.' },
+  { icon: LayoutDashboard, title: 'Developer Dashboard', desc: 'Manage multiple AI providers through one unified API with key management and analytics.' },
+  { icon: Smartphone, title: 'Mobile AI App', desc: 'Power mobile apps with affordable AI — chat, translation, code assistance at scale.' },
+  { icon: BarChart3, title: 'Data Analysis Tool', desc: 'Aggregate AI-powered insights across datasets with smart model routing.' },
+  { icon: MessageCircle, title: 'WhatsApp/Telegram Bot', desc: 'Deploy AI bots on messaging platforms at 95% lower cost than GPT-4.' },
 ]
 
 export function UseCases() {

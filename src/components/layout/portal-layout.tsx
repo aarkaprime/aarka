@@ -4,19 +4,19 @@ import { useEffect, type ReactNode } from 'react'
 import { useAppStore } from '@/store/app-store'
 import { signOut } from 'next-auth/react'
 import {
-  LayoutDashboard, Key, Building2, Users, FileText, Webhook,
+  LayoutDashboard, Key, Cpu, FileText, Webhook,
   Terminal, BarChart3, Settings, CreditCard, BookOpen, Zap,
-  Menu, X, ChevronLeft, LogOut
+  Menu, X, ChevronLeft, LogOut, MessageSquare
 } from 'lucide-react'
 
 const navItems = [
   { icon: LayoutDashboard, label: 'Dashboard', view: 'dashboard' as const },
   { icon: Key, label: 'API Keys', view: 'api-keys' as const },
-  { icon: Building2, label: 'Properties', view: 'properties' as const },
-  { icon: Users, label: 'Leads', view: 'leads' as const },
-  { icon: FileText, label: 'Content', view: 'content' as const },
-  { icon: Webhook, label: 'Webhooks', view: 'webhooks' as const },
+  { icon: Cpu, label: 'AI Models', view: 'models' as const },
+  { icon: MessageSquare, label: 'Chat', view: 'chat' as const },
   { icon: Terminal, label: 'Playground', view: 'playground' as const },
+  { icon: FileText, label: 'Logs', view: 'logs' as const },
+  { icon: Webhook, label: 'Webhooks', view: 'webhooks' as const },
   { icon: BarChart3, label: 'Usage', view: 'usage' as const },
   { icon: Settings, label: 'Settings', view: 'settings' as const },
   { icon: CreditCard, label: 'Billing', view: 'billing' as const },

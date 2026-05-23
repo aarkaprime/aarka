@@ -4,10 +4,10 @@ import { create } from 'zustand'
 
 type View =
   | 'landing' | 'pricing' | 'docs' | 'login' | 'register'
-  | 'dashboard' | 'api-keys' | 'usage' | 'properties' | 'leads' | 'content'
+  | 'dashboard' | 'api-keys' | 'usage' | 'models' | 'logs' | 'chat'
   | 'webhooks' | 'playground' | 'settings' | 'billing'
   | 'docs-getting-started' | 'docs-authentication' | 'docs-ai-generation'
-  | 'docs-properties' | 'docs-leads' | 'docs-analytics' | 'docs-webhooks'
+  | 'docs-models' | 'docs-analytics' | 'docs-webhooks'
   | 'docs-ratelimits' | 'docs-errors' | 'docs-sdks' | 'docs-changelog'
 
 interface Toast {

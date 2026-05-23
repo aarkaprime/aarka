@@ -19,15 +19,14 @@ import { KeyList } from '@/components/api-keys/key-list'
 import { ApiPlayground } from '@/components/playground/api-playground'
 import { WebhookManager } from '@/components/webhooks/webhook-manager'
 import { UsagePage } from '@/components/usage/usage-page'
-import { PropertiesPage } from '@/components/properties/properties-page'
-import { LeadsPage } from '@/components/leads/leads-page'
-import { ContentPage } from '@/components/content/content-page'
+import { ModelsPage } from '@/components/models/models-page'
+import { ChatPlayground } from '@/components/playground/chat-playground'
+import { LogsPage } from '@/components/logs/logs-page'
 import { SettingsPage } from '@/components/settings/settings-page'
 import { DocsGettingStarted } from '@/components/docs/docs-getting-started'
 import { DocsAuthentication } from '@/components/docs/docs-authentication'
 import { DocsAIGeneration } from '@/components/docs/docs-ai-generation'
-import { DocsProperties } from '@/components/docs/docs-properties'
-import { DocsLeads } from '@/components/docs/docs-leads'
+import { DocsModels } from '@/components/docs/docs-models'
 import { DocsAnalytics } from '@/components/docs/docs-analytics'
 import { DocsWebhooks } from '@/components/docs/docs-webhooks'
 import { DocsRateLimits } from '@/components/docs/docs-ratelimits'
@@ -75,9 +74,8 @@ function DocsPage() {
           {[
             { title: 'Getting Started', view: 'docs-getting-started' as const, desc: 'Quick start guide and installation' },
             { title: 'Authentication', view: 'docs-authentication' as const, desc: 'API key authentication and security' },
-            { title: 'AI Generation', view: 'docs-ai-generation' as const, desc: 'Content generation endpoints' },
-            { title: 'Properties', view: 'docs-properties' as const, desc: 'Property management API' },
-            { title: 'Leads', view: 'docs-leads' as const, desc: 'Lead tracking and management' },
+            { title: 'Chat Completions', view: 'docs-ai-generation' as const, desc: 'AI chat completion endpoints' },
+            { title: 'Models', view: 'docs-models' as const, desc: 'Available AI models and pricing' },
             { title: 'Analytics', view: 'docs-analytics' as const, desc: 'Usage and performance analytics' },
             { title: 'Webhooks', view: 'docs-webhooks' as const, desc: 'Real-time event notifications' },
             { title: 'Rate Limits', view: 'docs-ratelimits' as const, desc: 'API rate limiting and quotas' },
@@ -123,10 +121,34 @@ function ApiKeysPage() {
   )
 }
 
+function ModelsPageWrapper() {
+  return (
+    <PortalLayout>
+      <ModelsPage />
+    </PortalLayout>
+  )
+}
+
+function ChatPage() {
+  return (
+    <PortalLayout>
+      <ChatPlayground />
+    </PortalLayout>
+  )
+}
+
 function PlaygroundPage() {
   return (
     <PortalLayout>
       <ApiPlayground />
+    </PortalLayout>
+  )
+}
+
+function LogsPageWrapper() {
+  return (
+    <PortalLayout>
+      <LogsPage />
     </PortalLayout>
   )
 }
@@ -143,30 +165,6 @@ function UsageAnalyticsPage() {
   return (
     <PortalLayout>
       <UsagePage />
-    </PortalLayout>
-  )
-}
-
-function PropertiesPageWrapper() {
-  return (
-    <PortalLayout>
-      <PropertiesPage />
-    </PortalLayout>
-  )
-}
-
-function LeadsPageWrapper() {
-  return (
-    <PortalLayout>
-      <LeadsPage />
-    </PortalLayout>
-  )
-}
-
-function ContentPageWrapper() {
-  return (
-    <PortalLayout>
-      <ContentPage />
     </PortalLayout>
   )
 }
@@ -235,21 +233,20 @@ export default function Home() {
   // Portal pages
   if (view === 'dashboard') return <DashboardPage />
   if (view === 'api-keys') return <ApiKeysPage />
+  if (view === 'models') return <ModelsPageWrapper />
+  if (view === 'chat') return <ChatPage />
   if (view === 'playground') return <PlaygroundPage />
+  if (view === 'logs') return <LogsPageWrapper />
   if (view === 'webhooks') return <WebhooksPage />
   if (view === 'usage') return <UsageAnalyticsPage />
-  if (view === 'properties') return <PropertiesPageWrapper />
-  if (view === 'leads') return <LeadsPageWrapper />
-  if (view === 'content') return <ContentPageWrapper />
   if (view === 'settings') return <SettingsPageWrapper />
   if (view === 'billing') return <BillingPage />
 
-  // Doc detail pages — real components
+  // Doc detail pages
   if (view === 'docs-getting-started') return <DocsGettingStarted />
   if (view === 'docs-authentication') return <DocsAuthentication />
   if (view === 'docs-ai-generation') return <DocsAIGeneration />
-  if (view === 'docs-properties') return <DocsProperties />
-  if (view === 'docs-leads') return <DocsLeads />
+  if (view === 'docs-models') return <DocsModels />
   if (view === 'docs-analytics') return <DocsAnalytics />
   if (view === 'docs-webhooks') return <DocsWebhooks />
   if (view === 'docs-ratelimits') return <DocsRateLimits />
